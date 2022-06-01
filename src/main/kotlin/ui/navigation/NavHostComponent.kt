@@ -28,7 +28,7 @@ class NavHostComponent(componentContext: ComponentContext) : ComponentContext by
     private fun createChild(configuration: ScreenConfig, context: ComponentContext): Content =
         when (configuration) {
             is ScreenConfig.Dashboard -> dashboard()
-            is ScreenConfig.Base64 -> base64(configuration)
+            is ScreenConfig.Tool -> base64(configuration)
         } // Configurations are handled exhaustively
 
     /*
@@ -38,7 +38,7 @@ class NavHostComponent(componentContext: ComponentContext) : ComponentContext by
         onItemClicked = ::onItemClicked
     ).asContent { DashboardScreen(it) }
 
-    private fun base64(configuration: ScreenConfig.Base64): Content = Base64ScreenComponent(
+    private fun base64(configuration: ScreenConfig.Tool): Content = Base64ScreenComponent(
         name = configuration.name,
         onBackPress = ::onBackClicked
     ).asContent { Base64Screen(it) }
@@ -47,7 +47,7 @@ class NavHostComponent(componentContext: ComponentContext) : ComponentContext by
      * Invoked when `GO` button clicked (InputScreen)
      */
     private fun onItemClicked(name: String) {
-        router.push(ScreenConfig.Base64(name))
+        router.push(ScreenConfig.Tool(name))
     }
 
     /**
@@ -59,7 +59,7 @@ class NavHostComponent(componentContext: ComponentContext) : ComponentContext by
 
     sealed class ScreenConfig : Parcelable {
         object Dashboard : ScreenConfig()
-        data class Base64(val name: String) : ScreenConfig()
+        data class Tool(val name: String) : ScreenConfig()
     }
 }
 
