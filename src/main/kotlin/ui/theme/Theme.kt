@@ -23,7 +23,7 @@ val DarkTheme = darkColors(
 @Composable
 fun DevUtilsTheme(
     isDark: Boolean = true,
-    content: @Composable (ColumnScope) -> Unit
+    content: @Composable () -> Unit
 ) {
     MaterialTheme(
         colors = if (isDark) DarkTheme else LightTheme,
@@ -32,9 +32,7 @@ fun DevUtilsTheme(
         Surface(
             modifier = Modifier.fillMaxSize()
         ) {
-            Column {
-                content(this)
-            }
+            content()
         }
     }
 }
