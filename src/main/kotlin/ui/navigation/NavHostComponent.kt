@@ -9,7 +9,7 @@ import com.arkivanov.decompose.router.push
 import com.arkivanov.decompose.router.router
 import com.arkivanov.essenty.parcelable.Parcelable
 import ui.screens.base.Base64Screen
-import ui.screens.base.Base64ScreenComponent
+import ui.screens.base.ToolComponent
 import ui.screens.dashboard.DashboardComponent
 import ui.screens.dashboard.DashboardScreen
 
@@ -38,7 +38,7 @@ class NavHostComponent(componentContext: ComponentContext) : ComponentContext by
         onItemClicked = ::onItemClicked
     ).asContent { DashboardScreen(it) }
 
-    private fun base64(configuration: ScreenConfig.Tool): Content = Base64ScreenComponent(
+    private fun base64(configuration: ScreenConfig.Tool): Content = ToolComponent(
         name = configuration.name,
         onBackPress = ::onBackClicked
     ).asContent { Base64Screen(it) }

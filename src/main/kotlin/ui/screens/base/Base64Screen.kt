@@ -12,7 +12,7 @@ import androidx.compose.ui.Modifier
 import ui.util.Dimen
 
 @Composable
-fun Base64Screen(base64ScreenComponent: Base64ScreenComponent) {
+fun Base64Screen(base64ScreenComponent: ToolComponent) {
     Column {
         TopAppBar {
             IconButton(onClick = base64ScreenComponent.onBackPress, modifier = Modifier.padding(start = Dimen.paddingMicro)) {

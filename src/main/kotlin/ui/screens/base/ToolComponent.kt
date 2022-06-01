@@ -1,7 +1,7 @@
 package ui.screens.base
 
 
-class Base64ScreenComponent(
+class ToolComponent(
     val name: String,
     val onBackPress: () -> Unit
 ){}
