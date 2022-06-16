@@ -1,7 +1,10 @@
 package ui.screens.base
 
+import model.Tool
+
 
 class ToolComponent(
-    val name: String,
+    val route: String,
+    val tool: Tool,
     val onBackPress: () -> Unit
 ){}

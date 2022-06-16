@@ -8,10 +8,13 @@ import com.arkivanov.decompose.router.pop
 import com.arkivanov.decompose.router.push
 import com.arkivanov.decompose.router.router
 import com.arkivanov.essenty.parcelable.Parcelable
+import model.Tool
+import model.ToolRoute
 import ui.screens.base.Base64Screen
 import ui.screens.base.ToolComponent
 import ui.screens.dashboard.DashboardComponent
 import ui.screens.dashboard.DashboardScreen
+import ui.screens.slug.SlugScreen
 
 typealias Content = @Composable () -> Unit
 
@@ -28,7 +31,14 @@ class NavHostComponent(componentContext: ComponentContext) : ComponentContext by
     private fun createChild(configuration: ScreenConfig, context: ComponentContext): Content =
         when (configuration) {
             is ScreenConfig.Dashboard -> dashboard()
-            is ScreenConfig.Tool -> base64(configuration)
+            is ScreenConfig.Item -> {
+                when (configuration.route) {
+                    ToolRoute.Base64.value -> base64(configuration)
+                    ToolRoute.Slugs.value -> slugs(configuration)
+                    else -> base64(configuration)
+
+                }
+            }
         } // Configurations are handled exhaustively
 
     /*
@@ -38,16 +48,23 @@ class NavHostComponent(componentContext: ComponentContext) : ComponentContext by
         onItemClicked = ::onItemClicked
     ).asContent { DashboardScreen(it) }
 
-    private fun base64(configuration: ScreenConfig.Tool): Content = ToolComponent(
-        name = configuration.name,
+    private fun base64(configuration: ScreenConfig.Item): Content = ToolComponent(
+        route = configuration.route,
+        tool = configuration.tool,
         onBackPress = ::onBackClicked
     ).asContent { Base64Screen(it) }
+
+    private fun slugs(configuration: ScreenConfig.Item): Content = ToolComponent(
+        route = configuration.route,
+        tool = configuration.tool,
+        onBackPress = ::onBackClicked
+    ).asContent { SlugScreen(it) }
 
     /**
      * Invoked when `GO` button clicked (InputScreen)
      */
-    private fun onItemClicked(name: String) {
-        router.push(ScreenConfig.Tool(name))
+    private fun onItemClicked(tool: Tool) {
+        router.push(ScreenConfig.Item(route = tool.route.value, tool))
     }
 
     /**
@@ -59,7 +76,7 @@ class NavHostComponent(componentContext: ComponentContext) : ComponentContext by
 
     sealed class ScreenConfig : Parcelable {
         object Dashboard : ScreenConfig()
-        data class Tool(val name: String) : ScreenConfig()
+        data class Item(val route: String, val tool: Tool) : ScreenConfig()
     }
 }
 

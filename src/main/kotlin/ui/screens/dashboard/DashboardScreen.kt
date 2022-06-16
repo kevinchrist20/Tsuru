@@ -32,7 +32,7 @@ fun DashboardScreen(dashboard: DashboardComponent) {
 
         LazyVerticalGrid(cells = GridCells.Fixed(3)) {
             items(dashboard.tools.value) {
-                ToolCard(tool = it, onClicked = { dashboard.onItemClicked(it.name) })
+                ToolCard(tool = it, onClicked = { dashboard.onItemClicked(it) })
             }
         }
 

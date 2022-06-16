@@ -12,16 +12,16 @@ import androidx.compose.ui.Modifier
 import ui.util.Dimen
 
 @Composable
-fun Base64Screen(base64ScreenComponent: ToolComponent) {
+fun Base64Screen(component: ToolComponent) {
     Column {
         TopAppBar {
-            IconButton(onClick = base64ScreenComponent.onBackPress, modifier = Modifier.padding(start = Dimen.paddingMicro)) {
+            IconButton(onClick = component.onBackPress, modifier = Modifier.padding(start = Dimen.paddingMicro)) {
                 Icon(Icons.Default.ArrowBack, contentDescription = null)
             }
 
             Spacer(Modifier.width(Dimen.paddingDefault))
 
-            Text("Welcome ${base64ScreenComponent.name}")
+            Text("Welcome ${component.tool.name}")
         }
     }
 }
