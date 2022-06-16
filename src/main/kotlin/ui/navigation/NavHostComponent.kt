@@ -36,7 +36,6 @@ class NavHostComponent(componentContext: ComponentContext) : ComponentContext by
                     ToolRoute.Base64.value -> base64(configuration)
                     ToolRoute.Slugs.value -> slugs(configuration)
                     else -> base64(configuration)
-
                 }
             }
         } // Configurations are handled exhaustively

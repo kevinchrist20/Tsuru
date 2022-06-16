@@ -1,27 +1,49 @@
 package ui.screens.base
 
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.runtime.Composable
+import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
+import ui.components.ScreenLayout
 import ui.util.Dimen
+import java.awt.Toolkit
+import java.awt.datatransfer.Clipboard
+import java.awt.datatransfer.StringSelection
+
 
 @Composable
 fun Base64Screen(component: ToolComponent) {
-    Column {
-        TopAppBar {
-            IconButton(onClick = component.onBackPress, modifier = Modifier.padding(start = Dimen.paddingMicro)) {
-                Icon(Icons.Default.ArrowBack, contentDescription = null)
-            }
+    val base64 = remember { Base64() }
+    var data by remember { mutableStateOf("") }
 
-            Spacer(Modifier.width(Dimen.paddingDefault))
+    ScreenLayout(toolComponent = component) {
+        TextField(
+            value = data,
+            onValueChange = {
+                data = it
+                base64.encode(data)
+            },
+            modifier = Modifier.fillMaxWidth().height(height = 200.dp).padding(Dimen.paddingDefault),
+        )
 
-            Text("Welcome ${component.tool.name}")
+        TextField(
+            value = base64.encoded.value,
+            readOnly = true,
+            onValueChange = {},
+            modifier = Modifier.fillMaxWidth().height(height = 200.dp).padding(Dimen.paddingDefault),
+        )
+
+        Button(onClick = {
+            copyToClipboard(base64.encoded.value)
+        }) {
+            Text("Copy")
         }
     }
+}
+
+fun copyToClipboard(message: String) {
+    val stringSelection = StringSelection(message)
+    val clipboard: Clipboard = Toolkit.getDefaultToolkit().systemClipboard
+    clipboard.setContents(stringSelection, null)
 }

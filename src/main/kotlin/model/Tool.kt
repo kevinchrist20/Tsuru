@@ -6,6 +6,7 @@ import com.arkivanov.essenty.parcelable.Parcelize
 @Parcelize
 data class Tool(
     val name: String,
+    val sub: String,
     val description: String,
     val route: ToolRoute,
     val icon: ImageVector? = null
