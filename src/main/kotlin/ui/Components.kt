@@ -49,17 +49,13 @@ fun ToolCard(
 ) {
     Card(
         onClick = onClicked,
-        modifier = modifier.padding(Dimen.paddingDefault).size(width = 200.dp, height = 400.dp),
+        modifier = modifier.padding(Dimen.paddingDefault).size(width = 350.dp, height = 200.dp),
         shape = RoundedCornerShape(size = Dimen.paddingMicro),
         backgroundColor = R.color.DarkBackground,
         elevation = Dimen.paddingMicro
     ) {
         Column(modifier = modifier.padding(Dimen.paddingDefault)) {
-            Spacer(modifier = Modifier.height(Dimen.paddingLarge))
-
-            ToolIconView(icon = tool.icon, modifier = modifier.align(Alignment.CenterHorizontally))
-
-            Spacer(modifier = Modifier.height(Dimen.paddingLarge))
+            Spacer(modifier = Modifier.height(Dimen.paddingDefault))
 
             Text(text = tool.name, style = AppTypography.h6, textAlign = TextAlign.Start)
 
@@ -80,11 +76,11 @@ fun ToolIconView(
     icon: ImageVector,
     modifier: Modifier = Modifier
 ) {
-    Box(modifier = modifier.size(100.dp).background(R.color.DarkShade), contentAlignment = Alignment.Center) {
+    Box(modifier = modifier.size(50.dp).background(R.color.DarkShade), contentAlignment = Alignment.Center) {
         Icon(
             imageVector = icon,
             contentDescription = null,
-            modifier = modifier.size(64.dp),
+            modifier = modifier.size(48.dp),
             tint = Color.White
         )
     }

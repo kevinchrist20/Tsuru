@@ -16,41 +16,19 @@ class DashboardComponent(
     init {
         _tools.value = getTools()
     }
+
     private fun getTools() = mutableListOf(
         Tool(
-            "Base64",
-            "A lightbulb icon indicates the tool(s) that can be used with the clipboard content. If only one tool is detected, the clipboard content will be automatically pasted in that tool",
-            Icons.Default.AccountCircle
-        ),
-        Tool("Hash", "Smart detection behavior can be customized in the app settings", Icons.Default.Settings),
-        Tool(
-            "HTML",
-            "DevToys works entirely offline! No need to use many untruthful websites to do simple tasks with your data. ",
-            Icons.Default.Refresh
+            name = "Base64 Text",
+            description = "It is a binary-to-text encoding representing binary data in an ASCII string format. It encodes text to Base64 or decodes Base64 to text.",
         ),
         Tool(
-            "Jetpack Compose",
-            "A lightbulb icon indicates the tool(s) that can be used with the clipboard content. If only one tool is detected, the clipboard content will be automatically pasted in that tool",
-            Icons.Default.Build
+            name = "Slugs",
+            description = "It slugify words to an SEO-friendly and human-readable URL slug for SEO optimization. A URL slug is the part located at the very end of a URL that refers to a page or post on a website."
         ),
         Tool(
-            "Json",
-            "If only one tool is detected, the clipboard content will be automatically pasted in that tool",
-            Icons.Default.Call
+            name = "UUID Generator",
+            description = "UUID is an abbreviation standing for Universally Unique Identifier. A UUID is a 128-bit value used to identify a computer resource to ensure its uniqueness."
         ),
-        Tool("JWT", "An offline Windows app that helps developers in daily tasks", Icons.Default.Notifications),
-        Tool("Yaml", " DevToys is designed to embrace Windows ecosystem. ", Icons.Default.Share),
-        Tool(
-            "UUID Generator",
-            "A lightbulb icon indicates the tool(s) that can be used with the clipboard content.",
-            Icons.Default.DateRange
-        ),
-        Tool("Date Parser", "An offline Windows app that helps developers in daily tasks", Icons.Default.Lock),
-        Tool(
-            "Regex",
-            "DevToys works entirely offline! No need to use many untruthful websites to do simple tasks with your data. ",
-            Icons.Default.MailOutline
-        ),
-        Tool("New", "Smart detection behavior can be customized in the app settings", Icons.Default.Favorite),
     )
 }

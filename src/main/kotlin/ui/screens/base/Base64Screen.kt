@@ -23,6 +23,5 @@ fun Base64Screen(base64ScreenComponent: ToolComponent) {
 
             Text("Welcome ${base64ScreenComponent.name}")
         }
-
     }
 }
