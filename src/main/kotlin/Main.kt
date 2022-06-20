@@ -1,32 +1,39 @@
 // Copyright 2000-2021 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
-import androidx.compose.material.MaterialTheme
 import androidx.compose.desktop.ui.tooling.preview.Preview
-import androidx.compose.material.Button
-import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.unit.DpSize
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Window
+import androidx.compose.ui.window.WindowPosition
+import androidx.compose.ui.window.WindowState
 import androidx.compose.ui.window.application
+import com.arkivanov.decompose.DefaultComponentContext
+import com.arkivanov.essenty.lifecycle.LifecycleRegistry
+import ui.navigation.NavHostComponent
+import ui.navigation.RootUi
+import ui.theme.DevUtilsTheme
+import ui.theme.R
+import ui.util.Dimen
 
 @Composable
 @Preview
 fun App() {
-    var text by remember { mutableStateOf("Hello, World!") }
-
-    MaterialTheme {
-        Button(onClick = {
-            text = "Hello, Desktop!"
-        }) {
-            Text(text)
-        }
+    val root = NavHostComponent(componentContext = DefaultComponentContext(lifecycle = LifecycleRegistry()))
+    DevUtilsTheme {
+        RootUi(root)
     }
 }
 
 fun main() = application {
-    Window(onCloseRequest = ::exitApplication) {
+    Window(
+        state = WindowState(
+            size = DpSize(Dimen.screenWidth, Dimen.screenHeight),
+            position = WindowPosition(alignment = Alignment.Center)
+        ),
+        onCloseRequest = ::exitApplication,
+        title = R.string.appName,
+    ) {
         App()
     }
 }

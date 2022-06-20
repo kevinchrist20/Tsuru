@@ -18,6 +18,11 @@ repositories {
 
 dependencies {
     implementation(compose.desktop.currentOs)
+
+    // Decompose
+    val decomposeVersion = "0.6.0"
+    implementation("com.arkivanov.decompose:decompose:$decomposeVersion")
+    implementation("com.arkivanov.decompose:extensions-compose-jetbrains:$decomposeVersion")
 }
 
 tasks.withType<KotlinCompile> {
