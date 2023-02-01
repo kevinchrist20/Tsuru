@@ -6,6 +6,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import ui.components.ScreenLayout
+import ui.toast
 import ui.util.Dimen
 import java.awt.Toolkit
 import java.awt.datatransfer.Clipboard
@@ -16,6 +17,14 @@ import java.awt.datatransfer.StringSelection
 fun Base64Screen(component: ToolComponent) {
     val base64 = remember { Base64() }
     var data by remember { mutableStateOf("") }
+    var showToast by remember { mutableStateOf(false) }
+
+    if (showToast) {
+        toast {
+            showToast = it
+        }
+    }
+
 
     ScreenLayout(toolComponent = component) {
         TextField(
@@ -36,6 +45,7 @@ fun Base64Screen(component: ToolComponent) {
 
         Button(onClick = {
             copyToClipboard(base64.encoded.value)
+            showToast = true
         }) {
             Text("Copy")
         }

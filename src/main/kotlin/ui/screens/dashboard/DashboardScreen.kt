@@ -10,7 +10,7 @@ import androidx.compose.material.icons.filled.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import ui.SearchView
-import ui.ToolCard
+import ui.toolCard
 import ui.util.Dimen
 
 @OptIn(ExperimentalFoundationApi::class)
@@ -32,7 +32,7 @@ fun DashboardScreen(dashboard: DashboardComponent) {
 
         LazyVerticalGrid(cells = GridCells.Fixed(3)) {
             items(dashboard.tools.value) {
-                ToolCard(tool = it, onClicked = { dashboard.onItemClicked(it) })
+                toolCard(tool = it, onClicked = { dashboard.onItemClicked(it) })
             }
         }
 

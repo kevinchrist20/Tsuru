@@ -1,21 +1,23 @@
 package ui
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
-import androidx.compose.runtime.Composable
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.window.Dialog
+import kotlinx.coroutines.delay
 import model.Tool
 import ui.theme.AppTypography
 import ui.theme.R
 import ui.util.Dimen
+import java.util.concurrent.TimeUnit
 
 @Composable
 fun SearchView(
@@ -42,7 +44,7 @@ fun SearchView(
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
-fun ToolCard(
+fun toolCard(
     tool: Tool,
     onClicked: () -> Unit,
     modifier: Modifier = Modifier
@@ -72,7 +74,7 @@ fun ToolCard(
 }
 
 @Composable
-fun ToolIconView(
+fun toolIconView(
     icon: ImageVector,
     modifier: Modifier = Modifier
 ) {
@@ -83,5 +85,33 @@ fun ToolIconView(
             modifier = modifier.size(48.dp),
             tint = Color.White
         )
+    }
+}
+
+@Composable
+fun toast(onDismiss: (Boolean) -> Unit) {
+    // Create a state variable to track whether the alert dialog is open
+    var alertDialogOpen by remember { mutableStateOf(true) }
+
+    // Use the Dialog and AlertDialog composable to show a timed alert dialog
+    Dialog(
+        onCloseRequest = {
+            alertDialogOpen = false
+        },
+        undecorated = true,
+    ) {
+        Column(modifier = Modifier.fillMaxSize().size(100.dp, 100.dp).background(color = Color.Black)) {
+            Text(text = "This is a timed alert dialog that will close after 5 seconds", color = Color.White)
+        }
+    }
+
+    // Use the delay function to close the alert dialog after 5 seconds
+    LaunchedEffect(Unit) {
+        delay(TimeUnit.SECONDS.toMillis(2))
+        alertDialogOpen = false
+    }
+
+    LaunchedEffect(alertDialogOpen) {
+        onDismiss(alertDialogOpen)
     }
 }
