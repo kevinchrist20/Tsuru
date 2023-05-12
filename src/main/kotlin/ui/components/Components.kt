@@ -1,4 +1,4 @@
-package ui
+package ui.components
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -28,16 +28,11 @@ fun SearchView(
     modifier: Modifier = Modifier
 ) {
     Surface(modifier = modifier.fillMaxWidth()) {
-        TextField(
-            value = value,
-            onValueChange = { onValueChange(it) },
-            placeholder = {
-                Text(text = placeHolderText, style = AppTypography.subtitle2)
-            },
-            trailingIcon = {
-                Icon(trailingIcon, null)
-            }
-        )
+        TextField(value = value, onValueChange = { onValueChange(it) }, placeholder = {
+            Text(text = placeHolderText, style = AppTypography.subtitle2)
+        }, trailingIcon = {
+            Icon(trailingIcon, null)
+        })
     }
 }
 
@@ -45,9 +40,7 @@ fun SearchView(
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun toolCard(
-    tool: Tool,
-    onClicked: () -> Unit,
-    modifier: Modifier = Modifier
+    tool: Tool, onClicked: () -> Unit, modifier: Modifier = Modifier
 ) {
     Card(
         onClick = onClicked,
@@ -75,15 +68,11 @@ fun toolCard(
 
 @Composable
 fun toolIconView(
-    icon: ImageVector,
-    modifier: Modifier = Modifier
+    icon: ImageVector, modifier: Modifier = Modifier
 ) {
     Box(modifier = modifier.size(50.dp).background(R.color.DarkShade), contentAlignment = Alignment.Center) {
         Icon(
-            imageVector = icon,
-            contentDescription = null,
-            modifier = modifier.size(48.dp),
-            tint = Color.White
+            imageVector = icon, contentDescription = null, modifier = modifier.size(48.dp), tint = Color.White
         )
     }
 }
@@ -98,20 +87,36 @@ fun toast(onDismiss: (Boolean) -> Unit) {
         onCloseRequest = {
             alertDialogOpen = false
         },
-        undecorated = true,
+        //undecorated = true,
     ) {
         Column(modifier = Modifier.fillMaxSize().size(100.dp, 100.dp).background(color = Color.Black)) {
             Text(text = "This is a timed alert dialog that will close after 5 seconds", color = Color.White)
         }
-    }
 
-    // Use the delay function to close the alert dialog after 5 seconds
-    LaunchedEffect(Unit) {
-        delay(TimeUnit.SECONDS.toMillis(2))
-        alertDialogOpen = false
-    }
+        // Use the delay function to close the alert dialog after 2 seconds
+        LaunchedEffect(Unit) {
+            delay(TimeUnit.SECONDS.toMillis(2))
+            alertDialogOpen = false
+        }
 
-    LaunchedEffect(alertDialogOpen) {
-        onDismiss(alertDialogOpen)
+        LaunchedEffect(alertDialogOpen) {
+            onDismiss(alertDialogOpen)
+        }
     }
 }
+
+//fun getOffset(wState: WindowState, dState: DialogState): DpOffset {
+//
+//    val winCenterPoint = DpOffset(
+//        wState.position.x + wState.size.width / 2,
+//        wState.position.y + wState.size.height / 2
+//    )
+//
+//    val dlgCenterPoint = DpOffset(
+//        dState.position.x + dState.size.width / 2,
+//        dState.position.y + dState.size.height /2
+//    )
+//
+//    return winCenterPoint - dlgCenterPoint
+//
+//}

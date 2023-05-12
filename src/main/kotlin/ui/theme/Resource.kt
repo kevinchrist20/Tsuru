@@ -2,17 +2,16 @@ package ui.theme
 
 import androidx.compose.ui.graphics.Color
 
-
+@Suppress("ClassName")
 object R {
-//    object drawables {
-//        const val appIcon = "drawables/launcher_icons/linux.png"
-//    }
+    object drawables {
+        const val appIcon = "drawables/launcher_icons/linux.png"
+    }
 
     object string {
         const val appName = "DevUtils - Developer Tools"
     }
 
-    @Suppress("ClassName")
     object color {
         val TelegramBlue = Color(0xFF30A3E6)
         val DarkBackground = Color(0xFF21252b)

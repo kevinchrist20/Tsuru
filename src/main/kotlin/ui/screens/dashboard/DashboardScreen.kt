@@ -9,8 +9,8 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
-import ui.SearchView
-import ui.toolCard
+import ui.components.SearchView
+import ui.components.toolCard
 import ui.util.Dimen
 
 @OptIn(ExperimentalFoundationApi::class)
@@ -24,7 +24,7 @@ fun DashboardScreen(dashboard: DashboardComponent) {
             onValueChange = {
                 searchValue = it
             },
-            placeHolderText = "Search for any tools...",
+            placeHolderText = "Search for any tool...",
             trailingIcon = Icons.Default.Search
         )
 
