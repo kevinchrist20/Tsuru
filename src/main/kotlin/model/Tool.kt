@@ -1,9 +1,7 @@
 package model
 
 import androidx.compose.ui.graphics.vector.ImageVector
-import com.arkivanov.essenty.parcelable.Parcelize
 
-@Parcelize
 data class Tool(
     val name: String,
     val sub: String,

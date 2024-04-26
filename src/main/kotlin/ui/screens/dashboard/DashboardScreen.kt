@@ -1,41 +1,56 @@
 package ui.screens.dashboard
 
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.GridCells
-import androidx.compose.foundation.lazy.LazyVerticalGrid
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
-import ui.SearchView
-import ui.ToolCard
+import cafe.adriel.voyager.core.model.rememberScreenModel
+import cafe.adriel.voyager.core.screen.Screen
+import cafe.adriel.voyager.navigator.LocalNavigator
+import cafe.adriel.voyager.navigator.currentOrThrow
+import model.ToolRoute
+import ui.components.SearchView
+import ui.components.ToolCard
 import ui.util.Dimen
 
-@OptIn(ExperimentalFoundationApi::class)
-@Composable
-fun DashboardScreen(dashboard: DashboardComponent) {
-    var searchValue by remember { mutableStateOf("") }
 
-    Column(modifier = Modifier.fillMaxSize().padding(Dimen.paddingDefault)) {
-        SearchView(
-            value = searchValue,
-            onValueChange = {
-                searchValue = it
-            },
-            placeHolderText = "Search for any tools...",
-            trailingIcon = Icons.Default.Search
-        )
+class DashboardScreen : Screen {
+    @Composable
+    override fun Content() {
+        val dashboardScreenModel = rememberScreenModel { DashboardScreenModel() }
+        val navigator = LocalNavigator.currentOrThrow
 
-        Spacer(modifier = Modifier.height(Dimen.paddingLarge))
+        var searchValue by remember { mutableStateOf("") }
 
-        LazyVerticalGrid(cells = GridCells.Fixed(3)) {
-            items(dashboard.tools.value) {
-                ToolCard(tool = it, onClicked = { dashboard.onItemClicked(it) })
+        Column(modifier = Modifier.fillMaxSize().padding(Dimen.paddingDefault)) {
+            SearchView(
+                value = searchValue,
+                onValueChange = {
+                    searchValue = it
+                },
+                placeHolderText = "Search for any tools...",
+                trailingIcon = Icons.Default.Search
+            )
+
+            Spacer(modifier = Modifier.height(Dimen.paddingLarge))
+
+            LazyVerticalGrid(columns = GridCells.Fixed(3)) {
+                items(dashboardScreenModel.tools.value) {
+                    ToolCard(tool = it, onClicked = {
+                        when (it.route) {
+                            ToolRoute.Slugs -> {}
+                            ToolRoute.UUID -> {}
+                            ToolRoute.Base64 -> {}
+                        }
+                    })
+                }
             }
-        }
 
-        Spacer(modifier = Modifier.height(Dimen.paddingLarge))
+            Spacer(modifier = Modifier.height(Dimen.paddingLarge))
+        }
     }
 }

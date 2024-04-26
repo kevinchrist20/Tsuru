@@ -1,16 +1,12 @@
 package ui.screens.dashboard
 
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.*
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
-import com.arkivanov.decompose.ComponentContext
+import cafe.adriel.voyager.core.model.ScreenModel
 import model.Tool
 import model.ToolRoute
 
-class DashboardComponent(
-    val onItemClicked: (Tool) -> Unit
-) {
+class DashboardScreenModel: ScreenModel {
     private val _tools = mutableStateOf(listOf<Tool>())
     val tools: State<List<Tool>> = _tools
 
