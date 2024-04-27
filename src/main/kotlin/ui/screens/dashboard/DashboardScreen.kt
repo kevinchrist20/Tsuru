@@ -15,8 +15,9 @@ import cafe.adriel.voyager.navigator.currentOrThrow
 import model.ToolRoute
 import ui.components.SearchView
 import ui.components.ToolCard
+import ui.screens.base.Base64Screen
+import ui.screens.slug.SlugScreen
 import ui.util.Dimen
-
 
 class DashboardScreen : Screen {
     @Composable
@@ -42,9 +43,13 @@ class DashboardScreen : Screen {
                 items(dashboardScreenModel.tools.value) {
                     ToolCard(tool = it, onClicked = {
                         when (it.route) {
-                            ToolRoute.Slugs -> {}
+                            ToolRoute.Slugs -> {
+                                navigator.push(SlugScreen())
+                            }
                             ToolRoute.UUID -> {}
-                            ToolRoute.Base64 -> {}
+                            ToolRoute.Base64 -> {
+                                navigator.push(Base64Screen())
+                            }
                         }
                     })
                 }

@@ -8,8 +8,11 @@ object R {
 //        const val appIcon = "drawables/launcher_icons/linux.png"
 //    }
 
+    @Suppress("ClassName")
     object string {
         const val appName = "DevUtils - Developer Tools"
+        const val base64Screen = "Base64 encoding & decoding"
+        const val slugScreen = "Slugs"
     }
 
     @Suppress("ClassName")
