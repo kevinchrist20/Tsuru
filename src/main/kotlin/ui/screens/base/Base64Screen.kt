@@ -17,9 +17,7 @@ import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
 import model.Tool
 import platform.extensions.copyToClipboard
-import ui.components.PrimaryButton
-import ui.components.ScreenLayout
-import ui.components.SecondaryButton
+import ui.components.*
 import ui.theme.R
 import ui.util.Dimen
 
@@ -118,26 +116,20 @@ class Base64Screen(private val tool: Tool) : Screen {
     ) {
         var data by remember { mutableStateOf("") }
 
-        TextField(
+        InputTextField(
             value = data,
             onValueChange = {
                 data = it
                 screenModel.encode(data)
             },
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(height = 200.dp)
-                .padding(top = Dimen.paddingMedium),
+            modifier = Modifier,
+            labelText = "Input String"
         )
 
-        TextField(
+        ReadOnlyInputTextField(
             value = screenModel.encoded.value,
-            readOnly = true,
-            onValueChange = {},
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(height = 200.dp)
-                .padding(vertical = Dimen.paddingDefault),
+            labelText = "Output Base64",
+            modifier = Modifier,
         )
     }
 
@@ -147,26 +139,20 @@ class Base64Screen(private val tool: Tool) : Screen {
     ) {
         var data by remember { mutableStateOf("") }
 
-        TextField(
+        InputTextField(
             value = data,
             onValueChange = {
                 data = it
                 screenModel.decode(data)
             },
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(height = 200.dp)
-                .padding(top = Dimen.paddingMedium),
+            modifier = Modifier,
+            labelText = "Input Base64"
         )
 
-        TextField(
+        ReadOnlyInputTextField(
             value = screenModel.decoded.value,
-            readOnly = true,
-            onValueChange = {},
+            labelText = "Output String",
             modifier = Modifier
-                .fillMaxWidth()
-                .height(height = 200.dp)
-                .padding(vertical = Dimen.paddingDefault),
         )
     }
 }
