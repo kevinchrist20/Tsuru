@@ -10,8 +10,7 @@ object R {
 
     @Suppress("ClassName")
     object string {
-        const val appName = "DevUtils - Developer Tools"
-        const val base64Screen = "Base64 encoding & decoding"
+        const val appName = "Tsuru - Developer's Toolkit"
         const val slugScreen = "Slugs"
     }
 
