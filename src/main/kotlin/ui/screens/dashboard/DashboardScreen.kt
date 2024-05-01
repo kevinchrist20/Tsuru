@@ -48,7 +48,9 @@ class DashboardScreen : Screen {
                             }
                             ToolRoute.UUID -> {}
                             ToolRoute.Base64 -> {
-                                navigator.push(Base64Screen())
+                                navigator.push(
+                                    Base64Screen(tool = it)
+                                )
                             }
                         }
                     })

@@ -5,8 +5,6 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
 import androidx.compose.material.TabRowDefaults.tabIndicatorOffset
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Clear
-import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
@@ -17,12 +15,16 @@ import cafe.adriel.voyager.core.model.rememberScreenModel
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
+import model.Tool
 import platform.extensions.copyToClipboard
+import ui.components.PrimaryButton
 import ui.components.ScreenLayout
+import ui.components.SecondaryButton
 import ui.theme.R
 import ui.util.Dimen
 
-class Base64Screen : Screen {
+class Base64Screen(private val tool: Tool) : Screen {
+
     @Composable
     override fun Content() {
         val navigator = LocalNavigator.currentOrThrow
@@ -34,7 +36,7 @@ class Base64Screen : Screen {
         var selectedTabIndex by remember { mutableIntStateOf(0) }
 
         ScreenLayout(
-            pageTitle = R.string.base64Screen,
+            pageTitle = tool.name,
             onBackPressed = {
                 navigator.pop()
             },
@@ -42,7 +44,7 @@ class Base64Screen : Screen {
         ) {
             TabRow(
                 selectedTabIndex = selectedTabIndex,
-                backgroundColor = Color.Transparent, //R.color.DarkBackground,
+                backgroundColor = Color.Transparent,
                 indicator = { tabPositions ->
                     TabRowDefaults.Indicator(
                         modifier = Modifier.tabIndicatorOffset(tabPositions[selectedTabIndex]),
@@ -71,31 +73,36 @@ class Base64Screen : Screen {
 
             when (selectedTabIndex) {
                 0 -> EncodePage(screenModel)
-                1 -> {}
+                1 -> DecodePage(screenModel)
                 else -> EncodePage(screenModel)
             }
 
             Row(
                 modifier = Modifier.fillMaxWidth().padding(vertical = Dimen.paddingDefault),
-//                horizontalArrangement = Arrangement.SpaceBetween
             ) {
-                Button(
-                    modifier = Modifier.width(120.dp),
+                PrimaryButton(
+                    modifier = Modifier,
                     onClick = {
                         screenModel.encoded.value.copyToClipboard()
                         isCopyPressed.value = true
-                    }) {
+                    }
+                ) {
                     Text("Copy")
                 }
 
                 Spacer(modifier = Modifier.width(Dimen.paddingDefault))
 
-                Button(
+                SecondaryButton(
+                    modifier = Modifier,
                     onClick = {},
                     colors = ButtonDefaults.buttonColors(backgroundColor = R.color.Red),
-                    contentPadding = PaddingValues(vertical = Dimen.paddingNano, horizontal = Dimen.paddingSmall)
                 ) {
-                    Icon(imageVector = Icons.Default.Delete, "clear_icon")
+                    Icon(
+                        imageVector = Icons.Default.Delete,
+                        "clear_icon",
+                        tint = R.color.WhiteSmoke
+                    )
+
                     Text(
                         "Clear",
                         color = R.color.WhiteSmoke
@@ -117,14 +124,49 @@ class Base64Screen : Screen {
                 data = it
                 screenModel.encode(data)
             },
-            modifier = Modifier.fillMaxWidth().height(height = 200.dp).padding(top = Dimen.paddingMedium),
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(height = 200.dp)
+                .padding(top = Dimen.paddingMedium),
         )
 
         TextField(
             value = screenModel.encoded.value,
             readOnly = true,
             onValueChange = {},
-            modifier = Modifier.fillMaxWidth().height(height = 200.dp).padding(vertical = Dimen.paddingDefault),
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(height = 200.dp)
+                .padding(vertical = Dimen.paddingDefault),
+        )
+    }
+
+    @Composable
+    private fun DecodePage(
+        screenModel: Base64ScreenModel
+    ) {
+        var data by remember { mutableStateOf("") }
+
+        TextField(
+            value = data,
+            onValueChange = {
+                data = it
+                screenModel.decode(data)
+            },
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(height = 200.dp)
+                .padding(top = Dimen.paddingMedium),
+        )
+
+        TextField(
+            value = screenModel.decoded.value,
+            readOnly = true,
+            onValueChange = {},
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(height = 200.dp)
+                .padding(vertical = Dimen.paddingDefault),
         )
     }
 }
