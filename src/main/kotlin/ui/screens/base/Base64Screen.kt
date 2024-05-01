@@ -10,6 +10,7 @@ import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
 import ui.components.ScreenLayout
+import ui.components.Toast
 import ui.theme.R
 import ui.util.Dimen
 import java.awt.Toolkit
@@ -24,11 +25,20 @@ class Base64Screen : Screen {
         val screenModel = rememberScreenModel { Base64ScreenModel() }
         var data by remember { mutableStateOf("") }
 
+        val isCopyPressed = remember { mutableStateOf(false) }
+
+//        if (isCopyPressed.value) {
+//            Toast {
+//                isCopyPressed.value = false
+//            }
+//        }
+
         ScreenLayout(
             pageTitle = R.string.base64Screen,
             onBackPressed = {
                 navigator.pop()
-            }
+            },
+            showIsCopiedSnackbar = isCopyPressed.value
         ) {
             TextField(
                 value = data,
@@ -48,6 +58,7 @@ class Base64Screen : Screen {
 
             Button(onClick = {
                 copyToClipboard(screenModel.encoded.value)
+                isCopyPressed.value = true
             }) {
                 Text("Copy")
             }

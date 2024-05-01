@@ -14,7 +14,7 @@ class DashboardScreenModel: ScreenModel {
         _tools.value = getTools()
     }
 
-    private fun getTools() = mutableListOf(
+    private fun getTools() = listOf(
         Tool(
             name = "Base64 Text",
             sub = "Base64 Encoder/Decoder",
