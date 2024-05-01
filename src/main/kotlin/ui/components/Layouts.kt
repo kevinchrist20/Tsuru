@@ -35,7 +35,9 @@ fun ScreenLayout(
             Text(text = pageTitle, style = MaterialTheme.typography.body1)
         }
     }) {
-        Column {
+        Column(
+            modifier = modifier.padding(Dimen.paddingDefault)
+        ) {
             content(it)
         }
 

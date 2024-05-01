@@ -16,8 +16,8 @@ class DashboardScreenModel: ScreenModel {
 
     private fun getTools() = listOf(
         Tool(
-            name = "Base64 Text",
-            sub = "Base64 Encoder/Decoder",
+            name = "Base64 Encoder/Decoder",
+            sub = "Base64 Text",
             description = "It is a binary-to-text encoding representing binary data in an ASCII string format. It encodes text to Base64 or decodes Base64 to text.",
             route = ToolRoute.Base64
         ),
