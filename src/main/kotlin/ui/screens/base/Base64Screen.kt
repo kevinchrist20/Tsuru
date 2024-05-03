@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
 import androidx.compose.material.TabRowDefaults.tabIndicatorOffset
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
@@ -27,11 +28,14 @@ class Base64Screen(private val tool: Tool) : Screen {
     override fun Content() {
         val navigator = LocalNavigator.currentOrThrow
 
-        val tabs = listOf("Encode", "Decode")
+        val tabs = listOf(R.string.encodeText, R.string.decodeText)
         val screenModel = rememberScreenModel { Base64ScreenModel() }
 
         val isCopyPressed = remember { mutableStateOf(false) }
         var selectedTabIndex by remember { mutableIntStateOf(0) }
+
+        val encodeInputText = remember { mutableStateOf("") }
+        val decodeInputText = remember { mutableStateOf("") }
 
         ScreenLayout(
             pageTitle = tool.name,
@@ -70,29 +74,52 @@ class Base64Screen(private val tool: Tool) : Screen {
             }
 
             when (selectedTabIndex) {
-                0 -> EncodePage(screenModel)
-                1 -> DecodePage(screenModel)
-                else -> EncodePage(screenModel)
+                0 -> EncodePage(screenModel, encodeInputText)
+                1 -> DecodePage(screenModel, decodeInputText)
             }
 
             Row(
-                modifier = Modifier.fillMaxWidth().padding(vertical = Dimen.paddingDefault),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(vertical = Dimen.paddingDefault),
             ) {
                 PrimaryButton(
                     modifier = Modifier,
                     onClick = {
-                        screenModel.encoded.value.copyToClipboard()
+                        if (selectedTabIndex == 0) {
+                            screenModel.encoded.value.copyToClipboard()
+                        } else {
+                            screenModel.decoded.value.copyToClipboard()
+                        }
+
                         isCopyPressed.value = true
                     }
                 ) {
-                    Text("Copy")
+                    Icon(
+                        imageVector = Icons.Filled.Close,
+                        "clear_icon",
+                        tint = R.color.WhiteSmoke
+                    )
+
+                    Text(
+                        R.string.copyText,
+                        color = R.color.WhiteSmoke
+                    )
                 }
 
                 Spacer(modifier = Modifier.width(Dimen.paddingDefault))
 
                 SecondaryButton(
                     modifier = Modifier,
-                    onClick = {},
+                    onClick = {
+                        if (selectedTabIndex == 0) {
+                            screenModel.clearEncodedValue()
+                            encodeInputText.value = ""
+                        } else {
+                            screenModel.clearDecodedValue()
+                            decodeInputText.value = ""
+                        }
+                    },
                     colors = ButtonDefaults.buttonColors(backgroundColor = R.color.Red),
                 ) {
                     Icon(
@@ -102,7 +129,7 @@ class Base64Screen(private val tool: Tool) : Screen {
                     )
 
                     Text(
-                        "Clear",
+                        R.string.clearText,
                         color = R.color.WhiteSmoke
                     )
                 }
@@ -112,46 +139,45 @@ class Base64Screen(private val tool: Tool) : Screen {
 
     @Composable
     private fun EncodePage(
-        screenModel: Base64ScreenModel
+        screenModel: Base64ScreenModel,
+        inputText: MutableState<String>
     ) {
-        var data by remember { mutableStateOf("") }
 
         InputTextField(
-            value = data,
+            value = inputText.value,
             onValueChange = {
-                data = it
-                screenModel.encode(data)
+                inputText.value = it
+                screenModel.encode(it)
             },
             modifier = Modifier,
-            labelText = "Input String"
+            labelText = R.string.inputString
         )
 
         ReadOnlyInputTextField(
             value = screenModel.encoded.value,
-            labelText = "Output Base64",
+            labelText = R.string.outputBase64,
             modifier = Modifier,
         )
     }
 
     @Composable
     private fun DecodePage(
-        screenModel: Base64ScreenModel
+        screenModel: Base64ScreenModel,
+        inputText: MutableState<String>
     ) {
-        var data by remember { mutableStateOf("") }
-
         InputTextField(
-            value = data,
+            value = inputText.value,
             onValueChange = {
-                data = it
-                screenModel.decode(data)
+                inputText.value = it
+                screenModel.decode(it)
             },
             modifier = Modifier,
-            labelText = "Input Base64"
+            labelText = R.string.inputBase64
         )
 
         ReadOnlyInputTextField(
             value = screenModel.decoded.value,
-            labelText = "Output String",
+            labelText = R.string.outputString,
             modifier = Modifier
         )
     }

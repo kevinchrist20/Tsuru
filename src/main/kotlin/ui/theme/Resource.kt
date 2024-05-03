@@ -12,6 +12,15 @@ object R {
     object string {
         const val appName = "Tsuru - Developer's Toolkit"
         const val slugScreen = "Slugs"
+        const val searchPlaceholder = "Search for any tools..."
+        const val encodeText = "Encode"
+        const val decodeText = "Decode"
+        const val copyText = "Copy"
+        const val clearText = "Clear"
+        const val inputString = "Input String"
+        const val outputBase64 = "Output Base64"
+        const val inputBase64 = "Input Base64"
+        const val outputString = "Output String"
     }
 
     @Suppress("ClassName")

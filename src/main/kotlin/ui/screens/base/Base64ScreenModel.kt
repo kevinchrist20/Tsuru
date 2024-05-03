@@ -20,4 +20,12 @@ class Base64ScreenModel: ScreenModel {
     fun decode(encodedData: String, encoding: Charset = Charsets.UTF_8) {
         _decoded.value = String(Base64.getDecoder().decode(encodedData))
     }
+
+    fun clearEncodedValue() {
+        _encoded.value = ""
+    }
+
+    fun clearDecodedValue() {
+        _decoded.value = ""
+    }
 }

@@ -17,6 +17,7 @@ import ui.components.SearchView
 import ui.components.ToolCard
 import ui.screens.base.Base64Screen
 import ui.screens.slug.SlugScreen
+import ui.theme.R
 import ui.util.Dimen
 
 class DashboardScreen : Screen {
@@ -33,7 +34,7 @@ class DashboardScreen : Screen {
                 onValueChange = {
                     searchValue = it
                 },
-                placeHolderText = "Search for any tools...",
+                placeHolderText = R.string.searchPlaceholder,
                 trailingIcon = Icons.Default.Search
             )
 
