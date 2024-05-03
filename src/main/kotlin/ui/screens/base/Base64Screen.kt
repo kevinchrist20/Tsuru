@@ -38,7 +38,7 @@ class Base64Screen(private val tool: Tool) : Screen {
         val decodeInputText = remember { mutableStateOf("") }
 
         ScreenLayout(
-            pageTitle = tool.name,
+            tool = tool,
             onBackPressed = {
                 navigator.pop()
             },

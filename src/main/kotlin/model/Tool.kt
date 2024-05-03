@@ -1,6 +1,7 @@
 package model
 
 import androidx.compose.ui.graphics.vector.ImageVector
+import java.io.Serializable
 
 data class Tool(
     val name: String,
@@ -8,7 +9,7 @@ data class Tool(
     val description: String,
     val route: ToolRoute,
     val icon: ImageVector? = null
-)
+): Serializable
 
 enum class ToolRoute(val value: String) {
     Base64("base64"),

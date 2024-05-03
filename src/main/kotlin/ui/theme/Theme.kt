@@ -19,7 +19,7 @@ val DarkTheme = darkColors(
 )
 
 @Composable
-fun DevUtilsTheme(
+fun TsuruTheme(
     isDark: Boolean = true,
     content: @Composable () -> Unit
 ) {

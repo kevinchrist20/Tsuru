@@ -3,12 +3,12 @@ import androidx.compose.runtime.*
 import cafe.adriel.voyager.navigator.Navigator
 import cafe.adriel.voyager.transitions.SlideTransition
 import ui.screens.dashboard.DashboardScreen
-import ui.theme.DevUtilsTheme
+import ui.theme.TsuruTheme
 
 @Composable
 @Preview
 fun App() {
-    DevUtilsTheme {
+    TsuruTheme {
         Navigator(DashboardScreen()) { navigator ->
             SlideTransition(navigator)
         }

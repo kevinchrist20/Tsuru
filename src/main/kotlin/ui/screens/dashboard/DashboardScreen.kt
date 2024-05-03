@@ -45,8 +45,11 @@ class DashboardScreen : Screen {
                     ToolCard(tool = it, onClicked = {
                         when (it.route) {
                             ToolRoute.Slugs -> {
-                                navigator.push(SlugScreen())
+                                navigator.push(
+                                    SlugScreen(tool = it)
+                                )
                             }
+
                             ToolRoute.UUID -> {}
                             ToolRoute.Base64 -> {
                                 navigator.push(
