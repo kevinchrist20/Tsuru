@@ -13,6 +13,7 @@ data class Tool(
 
 enum class ToolRoute(val value: String) {
     Base64("base64"),
+    Base64Image("base64Image"),
     Slugs("slug"),
     UUID("uuid")
 }

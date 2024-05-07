@@ -24,7 +24,11 @@ dependencies {
     implementation("cafe.adriel.voyager:voyager-screenmodel:$voyagerVersion")
     implementation("cafe.adriel.voyager:voyager-transitions:$voyagerVersion")
 
+    // Material icons extension
     implementation("androidx.compose.material:material-icons-extended:1.6.0")
+
+    // Image picker
+    implementation("com.darkrockstudios:mpfilepicker:3.1.0")
 
 }
 

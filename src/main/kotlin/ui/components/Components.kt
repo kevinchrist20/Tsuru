@@ -89,30 +89,37 @@ fun ToolIconView(
 }
 
 @Composable
-fun Toast(onDismiss: (Boolean) -> Unit) {
-    // Create a state variable to track whether the alert dialog is open
-    var alertDialogOpen by remember { mutableStateOf(true) }
-
-    // Use the Dialog and AlertDialog composable to show a timed alert dialog
-    // Use the delay function to close the alert dialog after 2 seconds
-    DialogWindow(onCloseRequest = {
-        alertDialogOpen = false
-    },
-        //undecorated = true,
-        content =  {
-            Column(modifier = Modifier.fillMaxSize().size(100.dp, 100.dp).background(color = Color.Black)) {
-                Text(text = "This is a timed alert dialog that will close after 5 seconds", color = Color.White)
+fun AppDialog(
+    title: String,
+    content: String,
+    onDismiss: () -> Unit
+) {
+    AlertDialog(
+        title = {
+            Text(text = title, style = AppTypography.h5)
+        },
+        text = {
+            Column {
+                Text(text = content)
             }
-
-            // Use the delay function to close the alert dialog after 2 seconds
-            LaunchedEffect(Unit) {
-                delay(TimeUnit.SECONDS.toMillis(5000))
-                alertDialogOpen = false
+        },
+        buttons = {
+            Row(
+                modifier = Modifier.fillMaxWidth().padding(
+                    start = Dimen.paddingDefault,
+                    end = Dimen.paddingDefault,
+                    bottom = Dimen.paddingDefault
+                ),
+                horizontalArrangement = Arrangement.End
+            ) {
+                PrimaryButton(
+                    onClick = onDismiss
+                ) {
+                    Text("Close")
+                }
             }
-
-            LaunchedEffect(alertDialogOpen) {
-                onDismiss(alertDialogOpen)
-            }
-        })
+        },
+        onDismissRequest = onDismiss
+    )
 }
 
