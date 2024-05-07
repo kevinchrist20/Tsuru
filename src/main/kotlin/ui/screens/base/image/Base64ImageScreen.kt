@@ -1,12 +1,16 @@
 package ui.screens.base.image
 
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.material.TabRowDefaults.tabIndicatorOffset
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ContentCopy
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -21,11 +25,11 @@ import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
 import com.darkrockstudios.libraries.mpfilepicker.FilePicker
 import model.Tool
-import ui.components.PrimaryButton
-import ui.components.ReadOnlyInputTextField
-import ui.components.ScreenLayout
+import platform.extensions.copyToClipboard
+import ui.components.*
 import ui.theme.AppTypography
 import ui.theme.R
+import ui.util.Dimen
 
 class Base64ImageScreen(private val tool: Tool) : Screen {
 
@@ -42,6 +46,7 @@ class Base64ImageScreen(private val tool: Tool) : Screen {
         var selectedTabIndex by remember { mutableIntStateOf(0) }
 
         val imagePickerFieldText = remember { mutableStateOf("Select Image") }
+        val decodeInputText = remember { mutableStateOf("") }
 
         var showFilePicker by remember { mutableStateOf(false) }
         FilePicker(show = showFilePicker, fileExtensions = IMAGE_FORMAT) { platformFile ->
@@ -127,7 +132,83 @@ class Base64ImageScreen(private val tool: Tool) : Screen {
                     )
                 }
 
-                1 -> {}
+                1 -> {
+                    Spacer(modifier = Modifier.height(24.dp))
+
+                    InputTextField(
+                        value = decodeInputText.value,
+                        onValueChange = {
+                            decodeInputText.value = it
+                            screenModel.decode(it)
+                        },
+                        modifier = Modifier,
+                        labelText = R.string.inputString
+                    )
+
+                    screenModel.decodeImageBitmap.value?.let { it1 ->
+                        Image(
+                            bitmap = it1,
+                            contentDescription = ""
+                        )
+                    }
+                }
+            }
+
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(vertical = Dimen.paddingDefault),
+            ) {
+                PrimaryButton(
+                    modifier = Modifier,
+                    onClick = {
+                        if (selectedTabIndex == 0) {
+                            screenModel.encodedImageString.value.copyToClipboard()
+                        } else {
+//                            screenModel.decoded.value.copyToClipboard()
+                        }
+
+//                        isCopyPressed.value = true
+                    }
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.ContentCopy,
+                        "clear_icon",
+                        tint = R.color.WhiteSmoke
+                    )
+
+                    Text(
+                        R.string.copyText,
+                        color = R.color.WhiteSmoke
+                    )
+                }
+
+                Spacer(modifier = Modifier.width(Dimen.paddingDefault))
+
+                SecondaryButton(
+                    modifier = Modifier,
+                    onClick = {
+//                        if (selectedTabIndex == 0) {
+//                            screenModel.clearEncodedValue()
+//                            encodeInputText.value = ""
+//                        } else {
+//                            screenModel.clearDecodedValue()
+//                            decodeInputText.value = ""
+//                        }
+                    },
+                    colors = ButtonDefaults.buttonColors(backgroundColor = R.color.Red),
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.Delete,
+                        "clear_icon",
+                        tint = R.color.WhiteSmoke
+                    )
+
+                    Text(
+                        R.string.clearText,
+                        color = R.color.WhiteSmoke
+                    )
+                }
             }
         }
     }
