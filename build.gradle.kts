@@ -19,19 +19,12 @@ repositories {
 dependencies {
     implementation(compose.desktop.currentOs)
 
-    // Decompose
-//    val decomposeVersion = "0.6.0"
-//    implementation("com.arkivanov.decompose:decompose:$decomposeVersion")
-//    implementation("com.arkivanov.decompose:extensions-compose-jetbrains:$decomposeVersion")
-
     val voyagerVersion = "1.0.0"
-
     implementation("cafe.adriel.voyager:voyager-navigator:$voyagerVersion")
     implementation("cafe.adriel.voyager:voyager-screenmodel:$voyagerVersion")
     implementation("cafe.adriel.voyager:voyager-transitions:$voyagerVersion")
 
-//    implementation("cafe.adriel.voyager:voyager-bottom-sheet-navigator:$voyagerVersion")
-//    implementation("cafe.adriel.voyager:voyager-tab-navigator:$voyagerVersion")
+    implementation("androidx.compose.material:material-icons-extended:1.6.0")
 
 }
 

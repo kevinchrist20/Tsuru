@@ -16,7 +16,7 @@ val JetBrainsMono = FontFamily(
 )
 
 val AppTypography = Typography(
-    defaultFontFamily = JetBrainsMono,
+//    defaultFontFamily = JetBrainsMono,
 
     h1 = TextStyle(
         fontSize = 95.sp,

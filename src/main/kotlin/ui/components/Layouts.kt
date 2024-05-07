@@ -78,9 +78,9 @@ fun ScreenLayout(
                 modifier = modifier.padding(Dimen.paddingDefault)
             ) {
                 content(it)
-            }
 
-            snackBarTest(snackbarHostState)
+                snackBarTest(snackbarHostState)
+            }
         }
 
         LaunchedEffect(showIsCopiedSnackbar) {
@@ -95,12 +95,15 @@ fun ScreenLayout(
 
 @Composable
 fun snackBarTest(snackbarHostState: SnackbarHostState) {
-    SnackbarHost(hostState = snackbarHostState, snackbar = {
-        Snackbar(
-            backgroundColor = Color.Red,
-            modifier = Modifier.fillMaxWidth()
-        ) {
-            Text("Snackbar Test")
+    SnackbarHost(
+        hostState = snackbarHostState,
+        snackbar = {
+            Snackbar(
+//            backgroundColor = Color.Red,
+                modifier = Modifier
+            ) {
+                Text("Snackbar Test")
+            }
         }
-    })
+    )
 }
