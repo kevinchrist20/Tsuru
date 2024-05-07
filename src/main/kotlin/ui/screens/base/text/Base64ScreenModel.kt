@@ -1,4 +1,4 @@
-package ui.screens.base
+package ui.screens.base.text
 
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf

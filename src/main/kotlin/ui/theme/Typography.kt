@@ -20,7 +20,7 @@ val AppTypography = Typography(
 
     h1 = TextStyle(
         fontSize = 95.sp,
-        fontWeight = FontWeight.SemiBold,
+        fontWeight = FontWeight.Bold,
     ),
     h2 = TextStyle(
         fontSize = 59.sp,
@@ -36,22 +36,22 @@ val AppTypography = Typography(
     ),
     h5 = TextStyle(
         fontSize = 24.sp,
-        fontWeight = FontWeight.Medium
+        fontWeight = FontWeight.SemiBold
     ),
     h6 = TextStyle(
         fontSize = 20.sp,
-        fontWeight = FontWeight.SemiBold,
+        fontWeight = FontWeight.Medium,
     ),
     subtitle1 = TextStyle(
         fontSize = 16.sp,
-        fontWeight = FontWeight.SemiBold,
+        fontWeight = FontWeight.Medium,
     ),
     subtitle2 = TextStyle(
         fontSize = 14.sp,
-        fontWeight = FontWeight.SemiBold,
+        fontWeight = FontWeight.Medium,
     ),
     body1 = TextStyle(
-        fontSize = 18.sp,
+        fontSize = 16.sp,
         fontWeight = FontWeight.Normal,
     ),
     body2 = TextStyle(
@@ -60,11 +60,11 @@ val AppTypography = Typography(
     ),
     button = TextStyle(
         fontSize = 14.sp,
-        fontWeight = FontWeight.SemiBold
+        fontWeight = FontWeight.Medium
     ),
     caption = TextStyle(
         fontSize = 12.sp,
-        fontWeight = FontWeight.Medium,
+        fontWeight = FontWeight.Light,
     ),
     overline = TextStyle(
         fontSize = 10.sp,

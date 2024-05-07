@@ -10,7 +10,7 @@
 //import com.arkivanov.essenty.parcelable.Parcelable
 //import model.Tool
 //import model.ToolRoute
-//import ui.screens.base.Base64Screen
+//import ui.screens.base.text.Base64Screen
 //import ui.screens.base.ToolComponent
 //import ui.screens.dashboard.DashboardComponent
 //import ui.screens.dashboard.DashboardScreen

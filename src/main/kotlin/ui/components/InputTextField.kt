@@ -93,7 +93,7 @@ fun ReadOnlyInputTextField(
             .padding(vertical = Dimen.paddingDefault),
         readOnly = true,
         label = {
-            Text(labelText)
+            Text(labelText, style = AppTypography.caption)
         }
     )
 }

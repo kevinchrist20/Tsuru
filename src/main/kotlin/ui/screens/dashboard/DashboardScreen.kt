@@ -15,8 +15,8 @@ import cafe.adriel.voyager.navigator.currentOrThrow
 import model.ToolRoute
 import ui.components.SearchView
 import ui.components.ToolCard
-import ui.screens.base.Base64ImageScreen
-import ui.screens.base.Base64Screen
+import ui.screens.base.image.Base64ImageScreen
+import ui.screens.base.text.Base64Screen
 import ui.theme.R
 import ui.util.Dimen
 
