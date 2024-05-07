@@ -1,6 +1,5 @@
 package ui.screens.base.image
 
-import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.graphics.ImageBitmap
@@ -8,8 +7,6 @@ import cafe.adriel.voyager.core.model.ScreenModel
 import cafe.adriel.voyager.core.model.screenModelScope
 import com.darkrockstudios.libraries.mpfilepicker.MPFile
 import kotlinx.coroutines.launch
-import org.jetbrains.skia.Bitmap
-import org.jetbrains.skia.Image
 import ui.util.PNG_BASE64_HEADER
 import ui.util.imageBitmapFromBytes
 import ui.util.resolveImage
