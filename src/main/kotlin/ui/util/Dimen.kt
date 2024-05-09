@@ -21,8 +21,8 @@ object Dimen {
 
     val LargeSpacing = 40.dp
 
-    val screenHeight = 720.dp
+    val screenHeight = 900.dp
 
-    val screenWidth = 1200.dp
+    val screenWidth = 1280.dp
 
 }

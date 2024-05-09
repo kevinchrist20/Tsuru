@@ -70,10 +70,10 @@ fun InputTextField(
         value = value,
         onValueChange = onValueChange,
         modifier = modifier.fillMaxWidth()
-            .height(height = 200.dp)
+            .height(height = 300.dp)
             .padding(vertical = Dimen.paddingDefault),
         label = {
-            Text(labelText)
+            Text(labelText, style = AppTypography.body2)
         }
     )
 }
@@ -89,11 +89,11 @@ fun ReadOnlyInputTextField(
         value = value,
         onValueChange = {},
         modifier = modifier.fillMaxWidth()
-            .height(height = 200.dp)
+            .height(height = 300.dp)
             .padding(vertical = Dimen.paddingDefault),
         readOnly = true,
         label = {
-            Text(labelText, style = AppTypography.caption)
+            Text(labelText, style = AppTypography.body2)
         }
     )
 }

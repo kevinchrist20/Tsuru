@@ -1,13 +1,18 @@
 package ui.screens.base.text
 
+import androidx.compose.foundation.VerticalScrollbar
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.rememberScrollbarAdapter
 import androidx.compose.material.*
 import androidx.compose.material.TabRowDefaults.tabIndicatorOffset
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ContentCopy
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
@@ -36,6 +41,8 @@ class Base64Screen(private val tool: Tool) : Screen {
         val encodeInputText = remember { mutableStateOf("") }
         val decodeInputText = remember { mutableStateOf("") }
 
+        val lazyListState = rememberLazyListState()
+
         ScreenLayout(
             tool = tool,
             onBackPressed = {
@@ -59,7 +66,16 @@ class Base64Screen(private val tool: Tool) : Screen {
 
                     Tab(
                         selected = selected,
-                        onClick = { selectedTabIndex = index },
+                        onClick = {
+                            selectedTabIndex = index
+                            if (selectedTabIndex == 0) {
+                                screenModel.clearEncodedValue()
+                                encodeInputText.value = ""
+                            } else {
+                                screenModel.clearDecodedValue()
+                                decodeInputText.value = ""
+                            }
+                        },
                         modifier = Modifier.background(bgColor),
                         text = {
                             Text(
@@ -72,66 +88,87 @@ class Base64Screen(private val tool: Tool) : Screen {
                 }
             }
 
-            when (selectedTabIndex) {
-                0 -> EncodePage(screenModel, encodeInputText)
-                1 -> DecodePage(screenModel, decodeInputText)
-            }
-
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(vertical = Dimen.paddingDefault),
-            ) {
-                PrimaryButton(
-                    modifier = Modifier,
-                    onClick = {
-                        if (selectedTabIndex == 0) {
-                            screenModel.encoded.value.copyToClipboard()
-                        } else {
-                            screenModel.decoded.value.copyToClipboard()
+            Box {
+                LazyColumn(
+                    Modifier
+                        .fillMaxSize()
+                        .padding(
+                            end = Dimen.paddingSmall
+                        ), lazyListState
+                ) {
+                    item {
+                        when (selectedTabIndex) {
+                            0 -> EncodePage(screenModel, encodeInputText)
+                            1 -> DecodePage(screenModel, decodeInputText)
                         }
-
-                        isCopyPressed.value = true
                     }
-                ) {
-                    Icon(
-                        imageVector = Icons.Default.ContentCopy,
-                        "clear_icon",
-                        tint = R.color.WhiteSmoke
-                    )
 
-                    Text(
-                        R.string.copyText,
-                        color = R.color.WhiteSmoke
-                    )
-                }
+                    item {
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(vertical = Dimen.paddingDefault),
+                        ) {
+                            PrimaryButton(
+                                modifier = Modifier,
+                                onClick = {
+                                    if (selectedTabIndex == 0) {
+                                        screenModel.encoded.value.copyToClipboard()
+                                    } else {
+                                        screenModel.decoded.value.copyToClipboard()
+                                    }
 
-                Spacer(modifier = Modifier.width(Dimen.paddingDefault))
+                                    isCopyPressed.value = true
+                                }
+                            ) {
+                                Icon(
+                                    imageVector = Icons.Default.ContentCopy,
+                                    "clear_icon",
+                                    tint = R.color.WhiteSmoke
+                                )
 
-                SecondaryButton(
-                    modifier = Modifier,
-                    onClick = {
-                        if (selectedTabIndex == 0) {
-                            screenModel.clearEncodedValue()
-                            encodeInputText.value = ""
-                        } else {
-                            screenModel.clearDecodedValue()
-                            decodeInputText.value = ""
+                                Text(
+                                    R.string.copyText,
+                                    color = R.color.WhiteSmoke
+                                )
+                            }
+
+                            Spacer(modifier = Modifier.width(Dimen.paddingDefault))
+
+                            SecondaryButton(
+                                modifier = Modifier,
+                                onClick = {
+                                    if (selectedTabIndex == 0) {
+                                        screenModel.clearEncodedValue()
+                                        encodeInputText.value = ""
+                                    } else {
+                                        screenModel.clearDecodedValue()
+                                        decodeInputText.value = ""
+                                    }
+                                },
+                                colors = ButtonDefaults.buttonColors(backgroundColor = R.color.Red),
+                            ) {
+                                Icon(
+                                    imageVector = Icons.Default.Delete,
+                                    "clear_icon",
+                                    tint = R.color.WhiteSmoke
+                                )
+
+                                Text(
+                                    R.string.clearText,
+                                    color = R.color.WhiteSmoke
+                                )
+                            }
                         }
-                    },
-                    colors = ButtonDefaults.buttonColors(backgroundColor = R.color.Red),
-                ) {
-                    Icon(
-                        imageVector = Icons.Default.Delete,
-                        "clear_icon",
-                        tint = R.color.WhiteSmoke
-                    )
-
-                    Text(
-                        R.string.clearText,
-                        color = R.color.WhiteSmoke
-                    )
+                    }
                 }
+
+                VerticalScrollbar(
+                    modifier = Modifier.align(Alignment.CenterEnd).fillMaxHeight(),
+                    adapter = rememberScrollbarAdapter(
+                        scrollState = lazyListState
+                    )
+                )
             }
         }
     }
