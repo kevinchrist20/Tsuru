@@ -1,7 +1,5 @@
 package ui.components
 
-import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -13,7 +11,6 @@ import androidx.compose.material.icons.filled.Error
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import ui.theme.AppTypography
 import ui.theme.R
@@ -25,7 +22,7 @@ fun ErrorContainer(
     modifier: Modifier = Modifier
 ) {
     Surface(
-        color = Color(0xFF8B0000),
+        color = R.color.DarkRed,
         modifier = modifier.fillMaxWidth(),
         shape = RoundedCornerShape(corner = CornerSize(5.dp))
     ) {
@@ -35,7 +32,7 @@ fun ErrorContainer(
             Icon(
                 imageVector = Icons.Default.Error,
                 contentDescription = "error_icon",
-                tint = Color(0xFFff7373)
+                tint = R.color.IconRed
             )
 
             Column(
@@ -45,7 +42,7 @@ fun ErrorContainer(
             ) {
                 Text(
                     "Error",
-                    style = AppTypography.subtitle1.copy(color = Color(0xFFff7373))
+                    style = AppTypography.subtitle1.copy(color = R.color.IconRed)
                 )
 
                 Spacer(modifier = Modifier.height(Dimen.paddingMicro))

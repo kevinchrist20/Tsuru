@@ -35,6 +35,8 @@ object R {
         val WhiteSmoke = Color(0xFFF2F2F2)
         val Grey = Color(0xFF485C65)
         val Red = Color(0xFFCC2F26)
+        val DarkRed = Color(0xFF8B0000)
+        val IconRed = Color(0xFFff7373)
         val LightRed = Color(0xFFFFD7D5)
         val LightBlue = Color(0xFFDEF4FE)
         val LightGreen = Color(0xFFDBF7E0)
