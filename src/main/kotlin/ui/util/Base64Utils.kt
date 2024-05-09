@@ -26,7 +26,7 @@ object Base64Utils {
         try {
             return String(Base64.getDecoder().decode(data))
         } catch (e: Exception) {
-            throw Exception("Could not encode string from base 64 string.", e)
+            throw Exception("Could not decode string from base 64 string.", e)
         }
     }
 

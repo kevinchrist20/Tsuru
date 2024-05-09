@@ -34,7 +34,7 @@ fun InputTextField(
     maxLines: Int = Int.MAX_VALUE,
     readOnly: Boolean = false,
     enabled: Boolean = true,
-//    backgroundColor: Color = HubtelTheme.colors.inputBackground,
+//    backgroundColor: Color = TsuruTheme.colors.inputBackground,
     label: (@Composable () -> Unit)? = null,
     mutableInteractionSource: MutableInteractionSource = remember { MutableInteractionSource() }
 ) {
@@ -62,15 +62,17 @@ fun InputTextField(
 @Composable
 fun InputTextField(
     value: String,
-    modifier: Modifier = Modifier,
     labelText: String,
+    modifier: Modifier = Modifier,
+    isError: Boolean = false,
     onValueChange: (String) -> Unit,
 ) {
     InputTextField(
         value = value,
         onValueChange = onValueChange,
+        isError = isError,
         modifier = modifier.fillMaxWidth()
-            .height(height = 300.dp)
+            .height(height = 250.dp)
             .padding(vertical = Dimen.paddingDefault),
         label = {
             Text(labelText, style = AppTypography.body2)
@@ -83,13 +85,15 @@ fun InputTextField(
 fun ReadOnlyInputTextField(
     value: String,
     modifier: Modifier = Modifier,
+    isError: Boolean = false,
     labelText: String
 ) {
     InputTextField(
         value = value,
         onValueChange = {},
+        isError = isError,
         modifier = modifier.fillMaxWidth()
-            .height(height = 300.dp)
+            .height(height = 250.dp)
             .padding(vertical = Dimen.paddingDefault),
         readOnly = true,
         label = {

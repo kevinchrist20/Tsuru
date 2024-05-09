@@ -211,6 +211,13 @@ class Base64Screen(private val tool: Tool) : Screen {
             labelText = R.string.inputBase64
         )
 
+        if (!screenModel.decodingErr.value.isNullOrEmpty()) {
+            ErrorContainer(
+                message = screenModel.decodingErr.value ?: "",
+                modifier = Modifier.padding(vertical = Dimen.paddingDefault)
+            )
+        }
+
         ReadOnlyInputTextField(
             value = screenModel.decoded.value,
             labelText = R.string.outputString,

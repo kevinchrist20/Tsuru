@@ -10,7 +10,7 @@ class Base64ScreenModel : ScreenModel {
     val encoded: State<String> = _encoded
 
     private val _decodingErr = mutableStateOf<String?>(null)
-    private val decodingErr: State<String?> = _decodingErr
+    val decodingErr: State<String?> = _decodingErr
 
     private val _decoded = mutableStateOf("")
     val decoded: State<String> = _decoded
@@ -22,6 +22,7 @@ class Base64ScreenModel : ScreenModel {
     fun decode(encodedData: String) {
         try {
             _decoded.value = Base64Utils.decode(encodedData)
+            _decodingErr.value = null
         } catch (e: Exception) {
             _decodingErr.value = e.message
         }
