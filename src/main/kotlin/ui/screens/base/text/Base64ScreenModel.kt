@@ -3,22 +3,28 @@ package ui.screens.base.text
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import cafe.adriel.voyager.core.model.ScreenModel
-import java.nio.charset.Charset
-import java.util.*
+import ui.util.Base64Utils
 
-class Base64ScreenModel: ScreenModel {
+class Base64ScreenModel : ScreenModel {
     private val _encoded = mutableStateOf("")
     val encoded: State<String> = _encoded
+
+    private val _decodingErr = mutableStateOf<String?>(null)
+    private val decodingErr: State<String?> = _decodingErr
 
     private val _decoded = mutableStateOf("")
     val decoded: State<String> = _decoded
 
-    fun encode(data: String, encoding: Charset = Charsets.UTF_8) {
-        _encoded.value = Base64.getEncoder().encodeToString(data.toByteArray(encoding))
+    fun encode(data: String) {
+        _encoded.value = Base64Utils.encode(data)
     }
 
-    fun decode(encodedData: String, encoding: Charset = Charsets.UTF_8) {
-        _decoded.value = String(Base64.getDecoder().decode(encodedData))
+    fun decode(encodedData: String) {
+        try {
+            _decoded.value = Base64Utils.decode(encodedData)
+        } catch (e: Exception) {
+            _decodingErr.value = e.message
+        }
     }
 
     fun clearEncodedValue() {

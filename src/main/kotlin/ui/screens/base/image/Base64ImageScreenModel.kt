@@ -7,10 +7,8 @@ import cafe.adriel.voyager.core.model.ScreenModel
 import cafe.adriel.voyager.core.model.screenModelScope
 import com.darkrockstudios.libraries.mpfilepicker.MPFile
 import kotlinx.coroutines.launch
-import ui.util.PNG_BASE64_HEADER
+import ui.util.Base64Utils
 import ui.util.imageBitmapFromBytes
-import ui.util.resolveImage
-import java.util.*
 
 class Base64ImageScreenModel : ScreenModel {
 
@@ -23,12 +21,12 @@ class Base64ImageScreenModel : ScreenModel {
     fun encodeImage(imageFile: MPFile<Any>) {
         screenModelScope.launch {
             val encoded = imageFile.getFileByteArray()
-            _encodedImageString.value = PNG_BASE64_HEADER + Base64.getEncoder().encodeToString(encoded)
+            _encodedImageString.value = Base64Utils.encodeImage(encoded)
         }
     }
 
     fun decode(string: String) {
-        val image = resolveImage(string)
+        val image = Base64Utils.decodeImage(string)
         _decodeImageBitmap.value = image?.let { imageBitmapFromBytes(it) }
     }
 }
