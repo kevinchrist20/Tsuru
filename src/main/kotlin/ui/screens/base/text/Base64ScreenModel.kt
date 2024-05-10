@@ -21,8 +21,8 @@ class Base64ScreenModel : ScreenModel {
 
     fun decode(encodedData: String) {
         try {
-            _decoded.value = Base64Utils.decode(encodedData)
             _decodingErr.value = null
+            _decoded.value = Base64Utils.decode(encodedData)
         } catch (e: Exception) {
             _decodingErr.value = e.message
         }

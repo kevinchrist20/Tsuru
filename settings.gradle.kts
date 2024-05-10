@@ -1,4 +1,4 @@
-rootProject.name = "DevUtils"
+rootProject.name = "Tsuru"
 enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
 
 pluginManagement {

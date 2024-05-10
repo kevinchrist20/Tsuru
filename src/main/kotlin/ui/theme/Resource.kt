@@ -21,6 +21,8 @@ object R {
         const val outputBase64 = "Output Base64"
         const val inputBase64 = "Input Base64"
         const val outputString = "Output String"
+        const val errorText = "Error"
+        const val copiedText = "Copied!"
     }
 
     @Suppress("ClassName")

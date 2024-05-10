@@ -41,7 +41,7 @@ fun ErrorContainer(
                 horizontalAlignment = Alignment.Start
             ) {
                 Text(
-                    "Error",
+                    R.string.errorText,
                     style = AppTypography.subtitle1.copy(color = R.color.IconRed)
                 )
 

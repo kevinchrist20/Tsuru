@@ -1,10 +1,9 @@
-import org.jetbrains.compose.compose
 import org.jetbrains.compose.desktop.application.dsl.TargetFormat
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
-    kotlin("jvm") version "1.9.22"
-    id("org.jetbrains.compose") version "1.6.0"
+    kotlin("jvm") version "1.9.23"
+    id("org.jetbrains.compose") version "1.6.2"
 }
 
 group = "com.kevinchrist20"
@@ -30,6 +29,9 @@ dependencies {
     // Image picker
     implementation("com.darkrockstudios:mpfilepicker:3.1.0")
 
+    // Rich Text Editor
+    implementation("com.mohamedrejeb.richeditor:richeditor-compose:1.0.0-rc04")
+
 }
 
 tasks.withType<KotlinCompile> {
@@ -41,7 +43,7 @@ compose.desktop {
         mainClass = "MainKt"
         nativeDistributions {
             targetFormats(TargetFormat.Dmg, TargetFormat.Msi, TargetFormat.Deb)
-            packageName = "DevUtils"
+            packageName = "Tsuru"
             packageVersion = "1.0.0"
         }
     }

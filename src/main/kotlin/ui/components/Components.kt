@@ -61,7 +61,7 @@ fun ToolCard(
             Spacer(modifier = Modifier.height(Dimen.paddingSmall))
 
             Text(
-                text = tool.description,
+                text = tool.sub,
                 style = AppTypography.body2,
                 textAlign = TextAlign.Start,
                 color = R.color.MediumGrey,

@@ -20,11 +20,9 @@ import cafe.adriel.voyager.core.model.rememberScreenModel
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
-import kotlinx.coroutines.launch
 import model.Tool
 import platform.extensions.copyToClipboard
 import ui.components.*
-import ui.theme.AppTypography
 import ui.theme.R
 import ui.util.Dimen
 
@@ -50,7 +48,7 @@ class Base64Screen(private val tool: Tool) : Screen {
             onBackPressed = {
                 navigator.pop()
             },
-            snackbarMessage = "Copied!",
+            snackbarMessage = R.string.copiedText,
             showSnackbar = canShowSnackBar,
             onShowSnackbar = {
                 canShowSnackBar = it
