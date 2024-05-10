@@ -4,9 +4,11 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.ArrowBackIosNew
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.launch
 import model.Tool
 import ui.util.Dimen
@@ -16,13 +18,11 @@ fun ScreenLayout(
     tool: Tool,
     onBackPressed: () -> Unit,
     modifier: Modifier = Modifier,
-    showIsCopiedSnackbar: Boolean = remember { false },
+    snackbarMessage: String = "",
+    showSnackbar: Boolean = remember { false },
+    onShowSnackbar: (Boolean) -> Unit = {},
     content: @Composable (PaddingValues) -> Unit
 ) {
-    val coroutineScope = rememberCoroutineScope()
-
-    val snackbarHostState = remember { SnackbarHostState() }
-
     val showDialog = remember { mutableStateOf(false) }
 
     if (showDialog.value) {
@@ -46,8 +46,15 @@ fun ScreenLayout(
                     )
                 },
                 navigationIcon = {
-                    IconButton(onClick = onBackPressed, modifier = Modifier.padding(start = Dimen.paddingMicro)) {
-                        Icon(Icons.Filled.ArrowBack, contentDescription = "Localized description")
+                    IconButton(
+                        onClick = onBackPressed,
+                        modifier = Modifier.padding(start = Dimen.paddingMicro)
+                    ) {
+                        Icon(
+                            Icons.Default.ArrowBackIosNew,
+                            contentDescription = "Localized description",
+                            modifier = modifier.size(16.dp)
+                        )
                     }
                 },
                 actions = {
@@ -69,31 +76,15 @@ fun ScreenLayout(
             modifier = modifier.padding(Dimen.paddingDefault)
         ) {
             content(it)
+        }
 
-            snackBarTest(snackbarHostState)
+        if (showSnackbar) {
+            AppSnackbar(
+                message = snackbarMessage,
+                onShowSnackbar = {
+                    onShowSnackbar(it)
+                }
+            )
         }
     }
-
-    LaunchedEffect(showIsCopiedSnackbar) {
-        if (showIsCopiedSnackbar) {
-            coroutineScope.launch {
-                snackbarHostState.showSnackbar("")
-            }
-        }
-    }
-}
-
-@Composable
-fun snackBarTest(snackbarHostState: SnackbarHostState) {
-    SnackbarHost(
-        hostState = snackbarHostState,
-        snackbar = {
-            Snackbar(
-//            backgroundColor = Color.Red,
-                modifier = Modifier
-            ) {
-                Text("Snackbar Test")
-            }
-        }
-    )
 }

@@ -20,9 +20,11 @@ import cafe.adriel.voyager.core.model.rememberScreenModel
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
+import kotlinx.coroutines.launch
 import model.Tool
 import platform.extensions.copyToClipboard
 import ui.components.*
+import ui.theme.AppTypography
 import ui.theme.R
 import ui.util.Dimen
 
@@ -35,7 +37,7 @@ class Base64Screen(private val tool: Tool) : Screen {
         val tabs = listOf(R.string.encodeText, R.string.decodeText)
         val screenModel = rememberScreenModel { Base64ScreenModel() }
 
-        val isCopyPressed = remember { mutableStateOf(false) }
+        var canShowSnackBar by remember { mutableStateOf(false) }
         var selectedTabIndex by remember { mutableIntStateOf(0) }
 
         val encodeInputText = remember { mutableStateOf("") }
@@ -48,7 +50,11 @@ class Base64Screen(private val tool: Tool) : Screen {
             onBackPressed = {
                 navigator.pop()
             },
-            showIsCopiedSnackbar = isCopyPressed.value
+            snackbarMessage = "Copied!",
+            showSnackbar = canShowSnackBar,
+            onShowSnackbar = {
+                canShowSnackBar = it
+            }
         ) {
             TabRow(
                 selectedTabIndex = selectedTabIndex,
@@ -112,13 +118,13 @@ class Base64Screen(private val tool: Tool) : Screen {
                             PrimaryButton(
                                 modifier = Modifier,
                                 onClick = {
+                                    canShowSnackBar = true
+
                                     if (selectedTabIndex == 0) {
                                         screenModel.encoded.value.copyToClipboard()
                                     } else {
                                         screenModel.decoded.value.copyToClipboard()
                                     }
-
-                                    isCopyPressed.value = true
                                 }
                             ) {
                                 Icon(

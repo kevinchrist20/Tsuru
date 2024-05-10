@@ -11,13 +11,10 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.window.DialogWindow
-import kotlinx.coroutines.delay
 import model.Tool
 import ui.theme.AppTypography
 import ui.theme.R
 import ui.util.Dimen
-import java.util.concurrent.TimeUnit
 
 @Composable
 fun SearchView(
@@ -123,3 +120,26 @@ fun AppDialog(
     )
 }
 
+@Composable
+fun AppSnackbar(
+    message: String,
+    onShowSnackbar: (Boolean) -> Unit,
+    duration: SnackbarDuration = SnackbarDuration.Short
+) {
+    val snackbarHostState = remember { SnackbarHostState() }
+
+    LaunchedEffect(snackbarHostState) {
+        snackbarHostState.showSnackbar(message, duration = duration)
+        onShowSnackbar(false)
+    }
+
+    Box(
+        Modifier.fillMaxSize(),
+        contentAlignment = Alignment.BottomCenter,
+    ) {
+        SnackbarHost(
+            modifier = Modifier.width(200.dp),
+            hostState = snackbarHostState
+        )
+    }
+}
