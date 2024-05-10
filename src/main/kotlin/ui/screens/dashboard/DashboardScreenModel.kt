@@ -27,7 +27,7 @@ class DashboardScreenModel : ScreenModel {
                 <p>Enter text in the input field, and the output Base64 will be displayed accordingly.</p><br/>
  
                 <p><b>Base64 Decoder</b> - Reverses the process, converting Base64 encoded data back into its original form, facilitating data transfer and interpretation across different platforms.</p>
-                <p>Paste Base64 in the input field, and the output string will be displayed accordingly.</p><br/>
+                <p>Paste Base64 in the input field, and the output string will be displayed accordingly.</p>
                 
             """.trimIndent(),
             route = ToolRoute.Base64,
@@ -35,8 +35,18 @@ class DashboardScreenModel : ScreenModel {
         ),
         Tool(
             name = "Base64 Image Encoder/Decoder",
-            sub = "Base64 Image",
-            description = "Its a binary-to-text encoding representing binary data in an ASCII string format. A Base64 encoded image is the result of converting a binary image to a Base64 string. Base64 encoded images are commonly used in web development as inlined images embedded in HTML, CSS, and JavaScript files.",
+            sub = "Base64 Image encoding is a versatile tool for converting images to Base64 strings or decoding Base64-encoded images. A Base64 encoded image is the result of converting a binary image to a Base64 string.",
+            description = """
+                <p><a href="https://en.wikipedia.org/wiki/Base64"><b>Base64 Image</b></a> encoding simplifies the process of encoding images into Base64 strings and decoding Base64-encoded images. 
+                Base64 encoding represents binary data in ASCII format, allowing images to be embedded directly into HTML, CSS, or XML files.</p><br/>
+                
+                <p><b>Base64 Image Encoder</b> - Converts an image to Base64 by either browsing an image file locally or fetching an image from a URL. 
+                When the process is done, the input image and Base64 output will be displayed accordingly.</p>
+                <p>Maximum file size supported is 8 MB.</p><br/>
+                
+                <p><b>Base64 Image Decoder</b> - Converts a Base64 string to an image by pasting a Base64 string in the input field. The output image will show up instantly.</p>
+                <p>For a large image, this process may take a moment.</p>
+            """.trimIndent(),
             route = ToolRoute.Base64Image,
             category = ToolCategory.EncodeDecode
         ),
