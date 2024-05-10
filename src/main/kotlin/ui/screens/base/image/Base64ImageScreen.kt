@@ -94,64 +94,18 @@ class Base64ImageScreen(private val tool: Tool) : Screen {
             }
 
             when (selectedTabIndex) {
-                0 -> {
-                    Spacer(modifier = Modifier.height(24.dp))
-                    Surface(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height(40.dp),
-                        shape = RoundedCornerShape(corner = CornerSize(4.dp)),
-                        border = BorderStroke(width = Dp.Hairline, color = R.color.Grey)
-                    ) {
-                        Row(
-                            modifier = Modifier.fillMaxWidth().padding(4.dp),
-                            horizontalArrangement = Arrangement.SpaceBetween,
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            Text(
-                                imagePickerFieldText.value,
-                                style = AppTypography.caption.copy(fontSize = 14.sp)
-                            )
-
-                            PrimaryButton(
-                                onClick = {
-                                    showFilePicker = true
-                                }
-                            ) {
-                                Text("Browse")
-                            }
-                        }
+                0 -> EncodePage(
+                    screenModel = screenModel,
+                    imagePickerFieldText = imagePickerFieldText.value,
+                    onBrowseImageClick = {
+                        showFilePicker = true
                     }
+                )
 
-                    Spacer(modifier = Modifier.height(24.dp))
-
-                    ReadOnlyInputTextField(
-                        value = screenModel.encodedImageString.value,
-                        labelText = R.string.outputBase64,
-                        modifier = Modifier,
-                    )
-                }
-
-                1 -> {
-                    Spacer(modifier = Modifier.height(24.dp))
-
-                    InputTextField(
-                        value = decodeInputText.value,
-                        onValueChange = {
-                            decodeInputText.value = it
-                            screenModel.decode(it)
-                        },
-                        modifier = Modifier,
-                        labelText = R.string.inputString
-                    )
-
-                    screenModel.decodeImageBitmap.value?.let { it1 ->
-                        Image(
-                            bitmap = it1,
-                            contentDescription = ""
-                        )
-                    }
-                }
+                1 -> DecodePage(
+                    screenModel = screenModel,
+                    inputText = decodeInputText
+                )
             }
 
             Row(
@@ -210,6 +164,73 @@ class Base64ImageScreen(private val tool: Tool) : Screen {
                     )
                 }
             }
+        }
+    }
+
+    @Composable
+    private fun EncodePage(
+        screenModel: Base64ImageScreenModel,
+        imagePickerFieldText: String,
+        onBrowseImageClick: () -> Unit
+    ) {
+        Spacer(modifier = Modifier.height(24.dp))
+
+        Surface(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(40.dp),
+            shape = RoundedCornerShape(corner = CornerSize(4.dp)),
+            border = BorderStroke(width = Dp.Hairline, color = R.color.Grey)
+        ) {
+            Row(
+                modifier = Modifier.fillMaxWidth().padding(4.dp),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(
+                    imagePickerFieldText,
+                    style = AppTypography.caption.copy(fontSize = 14.sp)
+                )
+
+                PrimaryButton(
+                    onClick = onBrowseImageClick
+                ) {
+                    Text("Browse")
+                }
+            }
+        }
+
+        Spacer(modifier = Modifier.height(24.dp))
+
+        ReadOnlyInputTextField(
+            value = screenModel.encodedImageString.value,
+            labelText = R.string.outputBase64,
+            modifier = Modifier,
+        )
+    }
+
+    @Composable
+    private fun DecodePage(
+        screenModel: Base64ImageScreenModel,
+        inputText: MutableState<String>
+    ) {
+        Spacer(modifier = Modifier.height(24.dp))
+
+        InputTextField(
+            value = inputText.value,
+            onValueChange = {
+                inputText.value = it
+                screenModel.decode(it)
+            },
+            modifier = Modifier,
+            labelText = R.string.inputString
+        )
+
+        screenModel.decodeImageBitmap.value?.let { it1 ->
+            Image(
+                bitmap = it1,
+                contentDescription = ""
+            )
         }
     }
 }
