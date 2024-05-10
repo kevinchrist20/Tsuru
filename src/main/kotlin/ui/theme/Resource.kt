@@ -24,6 +24,8 @@ object R {
         const val errorText = "Error"
         const val copiedText = "Copied!"
         const val close = "Close"
+        const val selectImage = "Select Image"
+        const val browse = "Browse"
     }
 
     @Suppress("ClassName")

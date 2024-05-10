@@ -1,9 +1,9 @@
 package ui.screens.base.image
 
-import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
+import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
@@ -24,12 +24,14 @@ import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
 import com.darkrockstudios.libraries.mpfilepicker.FilePicker
+import com.darkrockstudios.libraries.mpfilepicker.MPFile
 import model.Tool
 import platform.extensions.copyToClipboard
 import ui.components.*
 import ui.theme.AppTypography
 import ui.theme.R
 import ui.util.Dimen
+import java.io.File
 
 class Base64ImageScreen(private val tool: Tool) : Screen {
 
@@ -45,7 +47,10 @@ class Base64ImageScreen(private val tool: Tool) : Screen {
         val tabs = listOf(R.string.encodeText, R.string.decodeText)
         var selectedTabIndex by remember { mutableIntStateOf(0) }
 
-        val imagePickerFieldText = remember { mutableStateOf("Select Image") }
+        var canShowSnackBar by remember { mutableStateOf(false) }
+        val lazyListState = rememberLazyListState()
+
+        val imagePickerFieldText = remember { mutableStateOf(R.string.selectImage) }
         val decodeInputText = remember { mutableStateOf("") }
 
         var showFilePicker by remember { mutableStateOf(false) }
@@ -62,6 +67,11 @@ class Base64ImageScreen(private val tool: Tool) : Screen {
             tool = tool,
             onBackPressed = {
                 navigator.pop()
+            },
+            snackbarMessage = R.string.copiedText,
+            showSnackbar = canShowSnackBar,
+            onShowSnackbar = {
+                canShowSnackBar = it
             }
         ) {
             TabRow(
@@ -80,7 +90,11 @@ class Base64ImageScreen(private val tool: Tool) : Screen {
 
                     Tab(
                         selected = selected,
-                        onClick = { selectedTabIndex = index },
+                        onClick = {
+                            selectedTabIndex = index
+                            screenModel.clear()
+                            decodeInputText.value = ""
+                        },
                         modifier = Modifier.background(bgColor),
                         text = {
                             Text(
@@ -93,76 +107,89 @@ class Base64ImageScreen(private val tool: Tool) : Screen {
                 }
             }
 
-            when (selectedTabIndex) {
-                0 -> EncodePage(
-                    screenModel = screenModel,
-                    imagePickerFieldText = imagePickerFieldText.value,
-                    onBrowseImageClick = {
-                        showFilePicker = true
-                    }
-                )
 
-                1 -> DecodePage(
-                    screenModel = screenModel,
-                    inputText = decodeInputText
-                )
-            }
+            Box {
+                LazyColumn(
+                    Modifier
+                        .fillMaxSize()
+                        .padding(
+                            end = Dimen.paddingSmall
+                        ), lazyListState
+                ) {
+                    item {
+                        when (selectedTabIndex) {
+                            0 -> EncodePage(
+                                screenModel = screenModel,
+                                imagePickerFieldText = imagePickerFieldText.value,
+                                onBrowseImageClick = {
+                                    showFilePicker = true
+                                }
+                            )
 
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(vertical = Dimen.paddingDefault),
-            ) {
-                PrimaryButton(
-                    modifier = Modifier,
-                    onClick = {
-                        if (selectedTabIndex == 0) {
-                            screenModel.encodedImageString.value.copyToClipboard()
-                        } else {
-//                            screenModel.decoded.value.copyToClipboard()
+                            1 -> DecodePage(
+                                screenModel = screenModel,
+                                inputText = decodeInputText
+                            )
                         }
-
-//                        isCopyPressed.value = true
                     }
-                ) {
-                    Icon(
-                        imageVector = Icons.Default.ContentCopy,
-                        "clear_icon",
-                        tint = R.color.WhiteSmoke
-                    )
 
-                    Text(
-                        R.string.copyText,
-                        color = R.color.WhiteSmoke
-                    )
+                    item {
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(vertical = Dimen.paddingDefault),
+                        ) {
+                            PrimaryButton(
+                                modifier = Modifier,
+                                onClick = {
+                                    if (selectedTabIndex == 0) {
+                                        screenModel.encodedImageString.value.copyToClipboard()
+                                    }
+                                }
+                            ) {
+                                Icon(
+                                    imageVector = Icons.Default.ContentCopy,
+                                    "clear_icon",
+                                    tint = R.color.WhiteSmoke
+                                )
+
+                                Text(
+                                    R.string.copyText,
+                                    color = R.color.WhiteSmoke
+                                )
+                            }
+
+                            Spacer(modifier = Modifier.width(Dimen.paddingDefault))
+
+                            SecondaryButton(
+                                modifier = Modifier,
+                                onClick = {
+                                    screenModel.clear()
+                                    decodeInputText.value = ""
+                                },
+                                colors = ButtonDefaults.buttonColors(backgroundColor = R.color.Red),
+                            ) {
+                                Icon(
+                                    imageVector = Icons.Default.Delete,
+                                    "clear_icon",
+                                    tint = R.color.WhiteSmoke
+                                )
+
+                                Text(
+                                    R.string.clearText,
+                                    color = R.color.WhiteSmoke
+                                )
+                            }
+                        }
+                    }
                 }
 
-                Spacer(modifier = Modifier.width(Dimen.paddingDefault))
-
-                SecondaryButton(
-                    modifier = Modifier,
-                    onClick = {
-//                        if (selectedTabIndex == 0) {
-//                            screenModel.clearEncodedValue()
-//                            encodeInputText.value = ""
-//                        } else {
-//                            screenModel.clearDecodedValue()
-//                            decodeInputText.value = ""
-//                        }
-                    },
-                    colors = ButtonDefaults.buttonColors(backgroundColor = R.color.Red),
-                ) {
-                    Icon(
-                        imageVector = Icons.Default.Delete,
-                        "clear_icon",
-                        tint = R.color.WhiteSmoke
+                VerticalScrollbar(
+                    modifier = Modifier.align(Alignment.CenterEnd).fillMaxHeight(),
+                    adapter = rememberScrollbarAdapter(
+                        scrollState = lazyListState
                     )
-
-                    Text(
-                        R.string.clearText,
-                        color = R.color.WhiteSmoke
-                    )
-                }
+                )
             }
         }
     }
@@ -177,13 +204,14 @@ class Base64ImageScreen(private val tool: Tool) : Screen {
 
         Surface(
             modifier = Modifier
-                .fillMaxWidth()
-                .height(40.dp),
+                .fillMaxWidth(),
             shape = RoundedCornerShape(corner = CornerSize(4.dp)),
             border = BorderStroke(width = Dp.Hairline, color = R.color.Grey)
         ) {
             Row(
-                modifier = Modifier.fillMaxWidth().padding(4.dp),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(vertical = Dimen.paddingMicro, horizontal = Dimen.paddingSmall),
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
@@ -195,7 +223,7 @@ class Base64ImageScreen(private val tool: Tool) : Screen {
                 PrimaryButton(
                     onClick = onBrowseImageClick
                 ) {
-                    Text("Browse")
+                    Text(R.string.browse)
                 }
             }
         }
