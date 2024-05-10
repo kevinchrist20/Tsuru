@@ -7,10 +7,18 @@ import androidx.compose.material.icons.filled.ArrowBackIosNew
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
+import com.mohamedrejeb.richeditor.annotation.ExperimentalRichTextApi
+import com.mohamedrejeb.richeditor.model.rememberRichTextState
+import com.mohamedrejeb.richeditor.ui.material3.RichText
 import model.Tool
+import ui.theme.AppTypography
+import ui.theme.R
 import ui.util.Dimen
 
+@OptIn(ExperimentalRichTextApi::class)
 @Composable
 fun ScreenLayout(
     tool: Tool,
@@ -21,14 +29,30 @@ fun ScreenLayout(
     onShowSnackbar: (Boolean) -> Unit = {},
     content: @Composable (PaddingValues) -> Unit
 ) {
+    val richTextState = rememberRichTextState()
     val showDialog = remember { mutableStateOf(false) }
 
     if (showDialog.value) {
         AppDialog(
             title = tool.name,
-            content = tool.description
+            onDismiss = {
+                showDialog.value = false
+            },
         ) {
-            showDialog.value = false
+            richTextState.setConfig(
+                linkColor = R.color.TelegramBlue,
+                linkTextDecoration = TextDecoration.None,
+                codeBackgroundColor = Color(0xFF272822),
+                codeStrokeColor = Color(0x00000066),
+                codeColor = Color(0xFFf8f8f2)
+            )
+            richTextState.setHtml(tool.description)
+
+            RichText(
+                state = richTextState,
+                color = Color.White,
+                style = AppTypography.body2
+            )
         }
     }
 

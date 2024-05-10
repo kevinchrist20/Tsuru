@@ -88,8 +88,8 @@ fun ToolIconView(
 @Composable
 fun AppDialog(
     title: String,
-    content: String,
-    onDismiss: () -> Unit
+    onDismiss: () -> Unit,
+    content: @Composable () -> Unit
 ) {
     AlertDialog(
         title = {
@@ -97,7 +97,7 @@ fun AppDialog(
         },
         text = {
             Column {
-                Text(text = content)
+                content()
             }
         },
         buttons = {
@@ -112,7 +112,7 @@ fun AppDialog(
                 PrimaryButton(
                     onClick = onDismiss
                 ) {
-                    Text("Close")
+                    Text(R.string.close)
                 }
             }
         },

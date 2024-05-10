@@ -23,6 +23,7 @@ object R {
         const val outputString = "Output String"
         const val errorText = "Error"
         const val copiedText = "Copied!"
+        const val close = "Close"
     }
 
     @Suppress("ClassName")
