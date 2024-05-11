@@ -254,11 +254,28 @@ class Base64ImageScreen(private val tool: Tool) : Screen {
             labelText = R.string.inputString
         )
 
-        screenModel.decodeImageBitmap.value?.let { it1 ->
-            Image(
-                bitmap = it1,
-                contentDescription = ""
-            )
+        Surface(
+            modifier = Modifier.fillMaxWidth(),
+            shape = RoundedCornerShape(corner = CornerSize(4.dp))
+        ) {
+            Column(
+                modifier = Modifier.fillMaxWidth().padding(Dimen.paddingDefault),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.Center
+            ) {
+                Text(
+                    "Preview Image",
+                    style = AppTypography.subtitle1
+                )
+
+                screenModel.decodeImageBitmap.value?.let { it1 ->
+                    Image(
+                        bitmap = it1,
+                        contentDescription = ""
+                    )
+                }
+            }
+
         }
     }
 }

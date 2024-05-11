@@ -93,6 +93,19 @@ fun ScreenLayout(
                 }
             )
         },
+        bottomBar = {
+            Surface(
+                modifier = Modifier.fillMaxWidth(),
+                elevation = 10.dp
+            ) {
+                Column(
+                    modifier = Modifier.fillMaxWidth().padding(Dimen.paddingDefault),
+                ) {
+                    Text("This is a bottom bar")
+                }
+
+            }
+        }
     ) {
         Column(
             modifier = modifier.padding(Dimen.paddingDefault)
