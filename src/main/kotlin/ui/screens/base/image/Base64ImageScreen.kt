@@ -1,5 +1,6 @@
 package ui.screens.base.image
 
+import androidx.compose.animation.core.*
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -8,12 +9,11 @@ import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.material.TabRowDefaults.tabIndicatorOffset
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ContentCopy
-import androidx.compose.material.icons.filled.Delete
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.scale
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.Dp
@@ -24,14 +24,14 @@ import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
 import com.darkrockstudios.libraries.mpfilepicker.FilePicker
-import com.darkrockstudios.libraries.mpfilepicker.MPFile
+import kotlinx.coroutines.launch
 import model.Tool
 import platform.extensions.copyToClipboard
 import ui.components.*
 import ui.theme.AppTypography
 import ui.theme.R
 import ui.util.Dimen
-import java.io.File
+
 
 class Base64ImageScreen(private val tool: Tool) : Screen {
 
@@ -54,6 +54,7 @@ class Base64ImageScreen(private val tool: Tool) : Screen {
         val decodeInputText = remember { mutableStateOf("") }
 
         var showFilePicker by remember { mutableStateOf(false) }
+
         FilePicker(show = showFilePicker, fileExtensions = IMAGE_FORMAT) { platformFile ->
             showFilePicker = false
 
@@ -72,6 +73,21 @@ class Base64ImageScreen(private val tool: Tool) : Screen {
             showSnackbar = canShowSnackBar,
             onShowSnackbar = {
                 canShowSnackBar = it
+            },
+            bottomNavContent = {
+                BottomNavContent(
+                    onDeleteClick = {
+                        screenModel.clear()
+                        decodeInputText.value = ""
+                    },
+                    onCopyClick = {
+                        canShowSnackBar = true
+
+                        if (selectedTabIndex == 0) {
+                            screenModel.encodedImageString.value.copyToClipboard()
+                        }
+                    }
+                )
             }
         ) {
             TabRow(
@@ -107,14 +123,14 @@ class Base64ImageScreen(private val tool: Tool) : Screen {
                 }
             }
 
-
             Box {
                 LazyColumn(
-                    Modifier
+                    modifier = Modifier
                         .fillMaxSize()
                         .padding(
                             end = Dimen.paddingSmall
-                        ), lazyListState
+                        ),
+                    state = lazyListState
                 ) {
                     item {
                         when (selectedTabIndex) {
@@ -132,55 +148,16 @@ class Base64ImageScreen(private val tool: Tool) : Screen {
                             )
                         }
                     }
+                }
 
-                    item {
-                        Row(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(vertical = Dimen.paddingDefault),
-                        ) {
-                            PrimaryButton(
-                                modifier = Modifier,
-                                onClick = {
-                                    if (selectedTabIndex == 0) {
-                                        screenModel.encodedImageString.value.copyToClipboard()
-                                    }
-                                }
-                            ) {
-                                Icon(
-                                    imageVector = Icons.Default.ContentCopy,
-                                    "clear_icon",
-                                    tint = R.color.WhiteSmoke
-                                )
-
-                                Text(
-                                    R.string.copyText,
-                                    color = R.color.WhiteSmoke
-                                )
-                            }
-
-                            Spacer(modifier = Modifier.width(Dimen.paddingDefault))
-
-                            SecondaryButton(
-                                modifier = Modifier,
-                                onClick = {
-                                    screenModel.clear()
-                                    decodeInputText.value = ""
-                                },
-                                colors = ButtonDefaults.buttonColors(backgroundColor = R.color.Red),
-                            ) {
-                                Icon(
-                                    imageVector = Icons.Default.Delete,
-                                    "clear_icon",
-                                    tint = R.color.WhiteSmoke
-                                )
-
-                                Text(
-                                    R.string.clearText,
-                                    color = R.color.WhiteSmoke
-                                )
-                            }
-                        }
+                if (screenModel.loading.value) {
+                    Row(
+                        horizontalArrangement = Arrangement.SpaceAround,
+                        modifier = Modifier.width(100.dp)
+                    ) {
+                        BubbleLoadingAnimation()
+                        BubbleLoadingAnimation()
+                        BubbleLoadingAnimation()
                     }
                 }
 
@@ -259,23 +236,55 @@ class Base64ImageScreen(private val tool: Tool) : Screen {
             shape = RoundedCornerShape(corner = CornerSize(4.dp))
         ) {
             Column(
-                modifier = Modifier.fillMaxWidth().padding(Dimen.paddingDefault),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(Dimen.paddingDefault),
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.Center
             ) {
                 Text(
                     "Preview Image",
-                    style = AppTypography.subtitle1
+                    style = AppTypography.subtitle2
                 )
+
+                Spacer(modifier = Modifier.height(Dimen.paddingDefault))
 
                 screenModel.decodeImageBitmap.value?.let { it1 ->
                     Image(
                         bitmap = it1,
-                        contentDescription = ""
+                        contentDescription = "decoded_image",
+                        modifier = Modifier.padding(bottom = Dimen.paddingMedium)
                     )
                 }
             }
+        }
+    }
 
+    @Composable
+    fun BubbleLoadingAnimation() {
+        val scale = remember { Animatable(0.5f) }
+
+        Box(
+            modifier = Modifier
+                .size(20.dp)
+                .scale(scale.value)
+        ) {
+            Canvas(modifier = Modifier.fillMaxSize()) {
+                drawCircle(color = Color.Blue)
+            }
+        }
+
+        LaunchedEffect(key1 = true) {
+            while (true) {
+                scale.animateTo(
+                    targetValue = 1f,
+                    animationSpec = tween(durationMillis = 500, easing = LinearEasing)
+                )
+                scale.animateTo(
+                    targetValue = 0.5f,
+                    animationSpec = tween(durationMillis = 500, easing = LinearEasing)
+                )
+            }
         }
     }
 }

@@ -6,6 +6,7 @@ import androidx.compose.ui.graphics.ImageBitmap
 import cafe.adriel.voyager.core.model.ScreenModel
 import cafe.adriel.voyager.core.model.screenModelScope
 import com.darkrockstudios.libraries.mpfilepicker.MPFile
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import ui.util.Base64Utils
 import ui.util.imageBitmapFromBytes
@@ -25,9 +26,14 @@ class Base64ImageScreenModel : ScreenModel {
     private val _encodingErr = mutableStateOf<String?>(null)
     val encodingErr: State<String?> = _encodingErr
 
+    private val _loading = mutableStateOf(false)
+    val loading: State<Boolean> = _loading
+
     @Suppress("UNCHECKED_CAST")
     fun encodeImage(mpFile: MPFile<Any>) {
         _encodingErr.value = null
+        _loading.value = true
+
         val imageFile = mpFile as? MPFile<File>
         if (imageFile != null) {
             screenModelScope.launch {
@@ -37,14 +43,20 @@ class Base64ImageScreenModel : ScreenModel {
                 } catch (e: Exception) {
                     _encodingErr.value = e.message
                 }
+
+                _loading.value = false
             }
         }
     }
 
     fun decode(string: String) {
+        _loading.value = true
         _encodingErr.value = null
+
         try {
             val image = Base64Utils.decodeImage(string)
+            _loading.value = false
+
             if (image != null) {
                 _decodeImageBitmap.value = imageBitmapFromBytes(image)
             } else {

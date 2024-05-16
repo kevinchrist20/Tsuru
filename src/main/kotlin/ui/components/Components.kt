@@ -4,6 +4,9 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ContentCopy
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -142,5 +145,48 @@ fun AppSnackbar(
             modifier = modifier.width(200.dp),
             hostState = snackbarHostState
         )
+    }
+}
+
+@Composable
+fun BottomNavContent(
+    onCopyClick: () -> Unit,
+    onDeleteClick: () -> Unit
+) {
+    Row {
+        PrimaryButton(
+            modifier = Modifier,
+            onClick = onCopyClick
+        ) {
+            Icon(
+                imageVector = Icons.Default.ContentCopy,
+                "clear_icon",
+                tint = R.color.WhiteSmoke
+            )
+
+            Text(
+                R.string.copyText,
+                color = R.color.WhiteSmoke
+            )
+        }
+
+        Spacer(modifier = Modifier.width(Dimen.paddingDefault))
+
+        SecondaryButton(
+            modifier = Modifier,
+            onClick = onDeleteClick,
+            colors = ButtonDefaults.buttonColors(backgroundColor = R.color.Red),
+        ) {
+            Icon(
+                imageVector = Icons.Default.Delete,
+                "clear_icon",
+                tint = R.color.WhiteSmoke
+            )
+
+            Text(
+                R.string.clearText,
+                color = R.color.WhiteSmoke
+            )
+        }
     }
 }

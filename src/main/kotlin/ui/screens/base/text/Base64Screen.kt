@@ -191,48 +191,5 @@ class Base64Screen(private val tool: Tool) : Screen {
             modifier = Modifier
         )
     }
-
-    @Composable
-    private fun BottomNavContent(
-        onCopyClick: () -> Unit,
-        onDeleteClick: () -> Unit
-    ) {
-        Row {
-            PrimaryButton(
-                modifier = Modifier,
-                onClick = onCopyClick
-            ) {
-                Icon(
-                    imageVector = Icons.Default.ContentCopy,
-                    "clear_icon",
-                    tint = R.color.WhiteSmoke
-                )
-
-                Text(
-                    R.string.copyText,
-                    color = R.color.WhiteSmoke
-                )
-            }
-
-            Spacer(modifier = Modifier.width(Dimen.paddingDefault))
-
-            SecondaryButton(
-                modifier = Modifier,
-                onClick = onDeleteClick,
-                colors = ButtonDefaults.buttonColors(backgroundColor = R.color.Red),
-            ) {
-                Icon(
-                    imageVector = Icons.Default.Delete,
-                    "clear_icon",
-                    tint = R.color.WhiteSmoke
-                )
-
-                Text(
-                    R.string.clearText,
-                    color = R.color.WhiteSmoke
-                )
-            }
-        }
-    }
 }
 
