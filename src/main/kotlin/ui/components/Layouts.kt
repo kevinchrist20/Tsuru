@@ -4,8 +4,11 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBackIosNew
+import androidx.compose.material.icons.filled.ContentCopy
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextDecoration
@@ -14,6 +17,7 @@ import com.mohamedrejeb.richeditor.annotation.ExperimentalRichTextApi
 import com.mohamedrejeb.richeditor.model.rememberRichTextState
 import com.mohamedrejeb.richeditor.ui.material3.RichText
 import model.Tool
+import platform.extensions.copyToClipboard
 import ui.theme.AppTypography
 import ui.theme.R
 import ui.util.Dimen
@@ -27,6 +31,7 @@ fun ScreenLayout(
     snackbarMessage: String = "",
     showSnackbar: Boolean = remember { false },
     onShowSnackbar: (Boolean) -> Unit = {},
+    bottomNavContent: @Composable RowScope.() -> Unit = {},
     content: @Composable (PaddingValues) -> Unit
 ) {
     val richTextState = rememberRichTextState()
@@ -98,28 +103,30 @@ fun ScreenLayout(
                 modifier = Modifier.fillMaxWidth(),
                 elevation = 10.dp
             ) {
-                Column(
-                    modifier = Modifier.fillMaxWidth().padding(Dimen.paddingDefault),
-                ) {
-                    Text("This is a bottom bar")
-                }
-
+                Row(
+                    modifier = Modifier.fillMaxWidth().padding(16.dp),
+                    content = bottomNavContent
+                )
             }
         }
     ) {
-        Column(
-            modifier = modifier.padding(Dimen.paddingDefault)
-        ) {
-            content(it)
+        Box {
+            Column(
+                modifier = modifier.padding(Dimen.paddingDefault)
+            ) {
+                content(it)
+            }
+
+            if (showSnackbar) {
+                AppSnackbar(
+                    modifier = Modifier.align(Alignment.TopCenter),
+                    message = snackbarMessage,
+                    onShowSnackbar = {
+                        onShowSnackbar(it)
+                    }
+                )
+            }
         }
 
-        if (showSnackbar) {
-            AppSnackbar(
-                message = snackbarMessage,
-                onShowSnackbar = {
-                    onShowSnackbar(it)
-                }
-            )
-        }
     }
 }

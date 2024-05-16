@@ -124,7 +124,8 @@ fun AppDialog(
 fun AppSnackbar(
     message: String,
     onShowSnackbar: (Boolean) -> Unit,
-    duration: SnackbarDuration = SnackbarDuration.Short
+    duration: SnackbarDuration = SnackbarDuration.Short,
+    modifier: Modifier = Modifier
 ) {
     val snackbarHostState = remember { SnackbarHostState() }
 
@@ -134,11 +135,11 @@ fun AppSnackbar(
     }
 
     Box(
-        Modifier.fillMaxSize(),
+        modifier.fillMaxSize(),
         contentAlignment = Alignment.BottomCenter,
     ) {
         SnackbarHost(
-            modifier = Modifier.width(200.dp),
+            modifier = modifier.width(200.dp),
             hostState = snackbarHostState
         )
     }

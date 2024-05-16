@@ -52,6 +52,28 @@ class Base64Screen(private val tool: Tool) : Screen {
             showSnackbar = canShowSnackBar,
             onShowSnackbar = {
                 canShowSnackBar = it
+            },
+            bottomNavContent = {
+                BottomNavContent(
+                    onDeleteClick = {
+                        if (selectedTabIndex == 0) {
+                            screenModel.clearEncodedValue()
+                            encodeInputText.value = ""
+                        } else {
+                            screenModel.clearDecodedValue()
+                            decodeInputText.value = ""
+                        }
+                    },
+                    onCopyClick = {
+                        canShowSnackBar = true
+
+                        if (selectedTabIndex == 0) {
+                            screenModel.encoded.value.copyToClipboard()
+                        } else {
+                            screenModel.decoded.value.copyToClipboard()
+                        }
+                    }
+                )
             }
         ) {
             TabRow(
@@ -104,65 +126,6 @@ class Base64Screen(private val tool: Tool) : Screen {
                         when (selectedTabIndex) {
                             0 -> EncodePage(screenModel, encodeInputText)
                             1 -> DecodePage(screenModel, decodeInputText)
-                        }
-                    }
-
-                    item {
-                        Row(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(vertical = Dimen.paddingDefault),
-                        ) {
-                            PrimaryButton(
-                                modifier = Modifier,
-                                onClick = {
-                                    canShowSnackBar = true
-
-                                    if (selectedTabIndex == 0) {
-                                        screenModel.encoded.value.copyToClipboard()
-                                    } else {
-                                        screenModel.decoded.value.copyToClipboard()
-                                    }
-                                }
-                            ) {
-                                Icon(
-                                    imageVector = Icons.Default.ContentCopy,
-                                    "clear_icon",
-                                    tint = R.color.WhiteSmoke
-                                )
-
-                                Text(
-                                    R.string.copyText,
-                                    color = R.color.WhiteSmoke
-                                )
-                            }
-
-                            Spacer(modifier = Modifier.width(Dimen.paddingDefault))
-
-                            SecondaryButton(
-                                modifier = Modifier,
-                                onClick = {
-                                    if (selectedTabIndex == 0) {
-                                        screenModel.clearEncodedValue()
-                                        encodeInputText.value = ""
-                                    } else {
-                                        screenModel.clearDecodedValue()
-                                        decodeInputText.value = ""
-                                    }
-                                },
-                                colors = ButtonDefaults.buttonColors(backgroundColor = R.color.Red),
-                            ) {
-                                Icon(
-                                    imageVector = Icons.Default.Delete,
-                                    "clear_icon",
-                                    tint = R.color.WhiteSmoke
-                                )
-
-                                Text(
-                                    R.string.clearText,
-                                    color = R.color.WhiteSmoke
-                                )
-                            }
                         }
                     }
                 }
@@ -227,6 +190,49 @@ class Base64Screen(private val tool: Tool) : Screen {
             labelText = R.string.outputString,
             modifier = Modifier
         )
+    }
+
+    @Composable
+    private fun BottomNavContent(
+        onCopyClick: () -> Unit,
+        onDeleteClick: () -> Unit
+    ) {
+        Row {
+            PrimaryButton(
+                modifier = Modifier,
+                onClick = onCopyClick
+            ) {
+                Icon(
+                    imageVector = Icons.Default.ContentCopy,
+                    "clear_icon",
+                    tint = R.color.WhiteSmoke
+                )
+
+                Text(
+                    R.string.copyText,
+                    color = R.color.WhiteSmoke
+                )
+            }
+
+            Spacer(modifier = Modifier.width(Dimen.paddingDefault))
+
+            SecondaryButton(
+                modifier = Modifier,
+                onClick = onDeleteClick,
+                colors = ButtonDefaults.buttonColors(backgroundColor = R.color.Red),
+            ) {
+                Icon(
+                    imageVector = Icons.Default.Delete,
+                    "clear_icon",
+                    tint = R.color.WhiteSmoke
+                )
+
+                Text(
+                    R.string.clearText,
+                    color = R.color.WhiteSmoke
+                )
+            }
+        }
     }
 }
 
