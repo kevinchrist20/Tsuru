@@ -19,11 +19,13 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.window.DialogProperties
 import cafe.adriel.voyager.core.model.rememberScreenModel
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
 import com.darkrockstudios.libraries.mpfilepicker.FilePicker
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import model.Tool
 import platform.extensions.copyToClipboard
@@ -59,6 +61,7 @@ class Base64ImageScreen(private val tool: Tool) : Screen {
             showFilePicker = false
 
             if (platformFile != null) {
+
                 imagePickerFieldText.value = platformFile.path
                 screenModel.encodeImage(platformFile)
             }
@@ -151,14 +154,31 @@ class Base64ImageScreen(private val tool: Tool) : Screen {
                 }
 
                 if (screenModel.loading.value) {
-                    Row(
-                        horizontalArrangement = Arrangement.SpaceAround,
-                        modifier = Modifier.width(100.dp)
-                    ) {
-                        BubbleLoadingAnimation()
-                        BubbleLoadingAnimation()
-                        BubbleLoadingAnimation()
-                    }
+                    AlertDialog(
+                        properties = DialogProperties(
+                            dismissOnClickOutside = false
+                        ),
+                        modifier = Modifier.align(Alignment.Center),
+                        text = {
+                            Column {
+                                Spacer(modifier = Modifier.height(16.dp))
+                                LinearProgressIndicator()
+                                Spacer(modifier = Modifier.height(16.dp))
+                                Text("Encoding image...")
+                            }
+
+                        },
+                        buttons = {},
+                        onDismissRequest = {}
+                    )
+//                    Row(
+//                        horizontalArrangement = Arrangement.SpaceAround,
+//                        modifier = Modifier.width(100.dp)
+//                    ) {
+//                        BubbleLoadingAnimation()
+//                        BubbleLoadingAnimation()
+//                        BubbleLoadingAnimation()
+//                    }
                 }
 
                 VerticalScrollbar(
@@ -208,7 +228,7 @@ class Base64ImageScreen(private val tool: Tool) : Screen {
         Spacer(modifier = Modifier.height(24.dp))
 
         ReadOnlyInputTextField(
-            value = screenModel.encodedImageString.value,
+            value = screenModel.encodedImageString,
             labelText = R.string.outputBase64,
             modifier = Modifier,
         )

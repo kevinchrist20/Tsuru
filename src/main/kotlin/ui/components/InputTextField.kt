@@ -8,12 +8,14 @@ import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.Text
 import androidx.compose.material.TextField
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
+import kotlinx.coroutines.FlowPreview
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.*
 import ui.theme.AppTypography
 import ui.util.Dimen
 
@@ -100,4 +102,35 @@ fun ReadOnlyInputTextField(
             Text(labelText, style = AppTypography.body2)
         }
     )
+}
+
+@Composable
+fun ReadOnlyInputTextField(
+    value: StateFlow<String>,
+    modifier: Modifier = Modifier,
+    isError: Boolean = false,
+    labelText: String
+) {
+    var bases by remember { mutableStateOf("") }
+    val string = rememberUpdatedState(bases);
+
+    InputTextField(
+        value = bases,
+        onValueChange = {},
+        isError = isError,
+        modifier = modifier.fillMaxWidth()
+            .height(height = 300.dp)
+            .padding(vertical = Dimen.paddingDefault),
+        readOnly = true,
+        label = {
+            Text(labelText, style = AppTypography.body2)
+        }
+    )
+
+    LaunchedEffect(Unit) {
+        value.collect {
+            bases = string.value + it
+            delay(500)
+        }
+    }
 }

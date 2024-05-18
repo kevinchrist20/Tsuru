@@ -6,16 +6,17 @@ import androidx.compose.ui.graphics.ImageBitmap
 import cafe.adriel.voyager.core.model.ScreenModel
 import cafe.adriel.voyager.core.model.screenModelScope
 import com.darkrockstudios.libraries.mpfilepicker.MPFile
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.*
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import ui.util.Base64Utils
 import ui.util.imageBitmapFromBytes
 import java.io.File
 
 class Base64ImageScreenModel : ScreenModel {
 
-    private val _encodedImageString = mutableStateOf("")
-    val encodedImageString: State<String> = _encodedImageString
+    private val _encodedImageString = MutableStateFlow("")
+    val encodedImageString: StateFlow<String> = _encodedImageString
 
     private val _decodeImageBitmap = mutableStateOf<ImageBitmap?>(null)
     val decodeImageBitmap: State<ImageBitmap?> = _decodeImageBitmap
@@ -29,6 +30,7 @@ class Base64ImageScreenModel : ScreenModel {
     private val _loading = mutableStateOf(false)
     val loading: State<Boolean> = _loading
 
+
     @Suppress("UNCHECKED_CAST")
     fun encodeImage(mpFile: MPFile<Any>) {
         _encodingErr.value = null
@@ -36,26 +38,43 @@ class Base64ImageScreenModel : ScreenModel {
 
         val imageFile = mpFile as? MPFile<File>
         if (imageFile != null) {
-            screenModelScope.launch {
-                val encoded = imageFile.getFileByteArray()
+            screenModelScope.launch(Dispatchers.IO) {
+                var encodedString = ""
+
                 try {
-                    _encodedImageString.value = Base64Utils.encodeImage(encoded)
+                    val encoded = imageFile.getFileByteArray()
+
+                    encodedString = Base64Utils.encodeImage(encoded)
                 } catch (e: Exception) {
-                    _encodingErr.value = e.message
+                    withContext(Dispatchers.Main) {
+                        _encodingErr.value = e.message
+                    }
                 }
 
-                _loading.value = false
+                withContext(Dispatchers.Main) {
+                    encodedString.reader().apply {
+                        val chunked = readText().chunked(10000)
+                        for (u in chunked) {
+                            _encodedImageString.tryEmit(u)
+                            delay(500)
+                        }
+
+                        close()
+                    }
+
+                    _loading.value = false
+                }
             }
         }
     }
 
     fun decode(string: String) {
-        _loading.value = true
+//        _loading.value = true
         _encodingErr.value = null
 
         try {
             val image = Base64Utils.decodeImage(string)
-            _loading.value = false
+//            _loading.value = false
 
             if (image != null) {
                 _decodeImageBitmap.value = imageBitmapFromBytes(image)
@@ -68,7 +87,7 @@ class Base64ImageScreenModel : ScreenModel {
     }
 
     fun clear() {
-        _encodedImageString.value = ""
+//        _encodedImageString.value = ""
         _decodeImageBitmap.value = null
 
         _decodingErr.value = null
