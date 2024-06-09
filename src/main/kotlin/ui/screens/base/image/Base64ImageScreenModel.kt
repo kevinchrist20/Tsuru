@@ -30,7 +30,6 @@ class Base64ImageScreenModel : ScreenModel {
     private val _loading = mutableStateOf(false)
     val loading: State<Boolean> = _loading
 
-
     @Suppress("UNCHECKED_CAST")
     fun encodeImage(mpFile: MPFile<Any>) {
         _encodingErr.value = null
@@ -38,32 +37,27 @@ class Base64ImageScreenModel : ScreenModel {
 
         val imageFile = mpFile as? MPFile<File>
         if (imageFile != null) {
+
             screenModelScope.launch(Dispatchers.IO) {
-                var encodedString = ""
+                var encodedStr = ""
 
                 try {
                     val encoded = imageFile.getFileByteArray()
 
-                    encodedString = Base64Utils.encodeImage(encoded)
+                    encodedStr = Base64Utils.encodeImage(encoded)
                 } catch (e: Exception) {
                     withContext(Dispatchers.Main) {
                         _encodingErr.value = e.message
+                        _loading.value = false
+                    }
+                } finally {
+                    withContext(Dispatchers.Main) {
+                        _encodedImageString.emit(encodedStr)
+                        _loading.value = false
                     }
                 }
 
-                withContext(Dispatchers.Main) {
-                    encodedString.reader().apply {
-                        val chunked = readText().chunked(10000)
-                        for (u in chunked) {
-                            _encodedImageString.tryEmit(u)
-                            delay(500)
-                        }
 
-                        close()
-                    }
-
-                    _loading.value = false
-                }
             }
         }
     }

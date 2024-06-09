@@ -112,7 +112,7 @@ fun ReadOnlyInputTextField(
     labelText: String
 ) {
     var bases by remember { mutableStateOf("") }
-    val string = rememberUpdatedState(bases);
+    val string = rememberUpdatedState(bases)
 
     InputTextField(
         value = bases,

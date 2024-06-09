@@ -4,6 +4,7 @@ import androidx.compose.animation.core.*
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -13,7 +14,6 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
-import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.Dp
@@ -25,14 +25,20 @@ import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
 import com.darkrockstudios.libraries.mpfilepicker.FilePicker
-import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import model.Tool
 import platform.extensions.copyToClipboard
 import ui.components.*
 import ui.theme.AppTypography
 import ui.theme.R
 import ui.util.Dimen
+import java.io.File
+import javax.swing.JFileChooser
+import javax.swing.filechooser.FileNameExtensionFilter
 
 
 class Base64ImageScreen(private val tool: Tool) : Screen {
@@ -44,6 +50,8 @@ class Base64ImageScreen(private val tool: Tool) : Screen {
     @Composable
     override fun Content() {
         val navigator = LocalNavigator.currentOrThrow
+        val scope = rememberCoroutineScope()
+
         val screenModel = rememberScreenModel { Base64ImageScreenModel() }
 
         val tabs = listOf(R.string.encodeText, R.string.decodeText)
@@ -57,13 +65,9 @@ class Base64ImageScreen(private val tool: Tool) : Screen {
 
         var showFilePicker by remember { mutableStateOf(false) }
 
-        FilePicker(show = showFilePicker, fileExtensions = IMAGE_FORMAT) { platformFile ->
-            showFilePicker = false
-
-            if (platformFile != null) {
-
-                imagePickerFieldText.value = platformFile.path
-                screenModel.encodeImage(platformFile)
+        if(showFilePicker) {
+            scope.launch {
+                pickFileLinux(fileExtensions = IMAGE_FORMAT)
             }
         }
 
@@ -189,6 +193,16 @@ class Base64ImageScreen(private val tool: Tool) : Screen {
                 )
             }
         }
+
+//        FilePicker(show = showFilePicker, fileExtensions = IMAGE_FORMAT) { platformFile ->
+//            showFilePicker = false
+//
+//            if (platformFile != null) {
+//                imagePickerFieldText.value = platformFile.path
+//                screenModel.encodeImage(platformFile)
+//            }
+//        }
+
     }
 
     @Composable
@@ -227,10 +241,9 @@ class Base64ImageScreen(private val tool: Tool) : Screen {
 
         Spacer(modifier = Modifier.height(24.dp))
 
-        ReadOnlyInputTextField(
-            value = screenModel.encodedImageString,
-            labelText = R.string.outputBase64,
-            modifier = Modifier,
+        LargeTextDisplay(
+            value = screenModel.encodedImageString.value,
+            modifier = Modifier.height(300.dp)
         )
     }
 
@@ -306,5 +319,37 @@ class Base64ImageScreen(private val tool: Tool) : Screen {
                 )
             }
         }
+    }
+
+    @Composable
+    fun LargeTextDisplay(value: String, chunkSize: Int = 10000, modifier: Modifier = Modifier) {
+        val chunks = remember(value) {
+            if (value.isEmpty()) listOf("") // Provide a list with an empty string if value is empty
+            else value.chunked(chunkSize)
+        }
+
+        LazyColumn(
+            userScrollEnabled = false,
+            modifier = modifier
+        ) {
+            items(chunks) { chunk ->
+                ReadOnlyInputTextField(
+                    value = chunk,
+                    labelText = R.string.outputBase64,
+                    modifier = Modifier,
+                )
+            }
+        }
+    }
+
+    suspend fun pickFileLinux(fileExtensions: List<String>): File? = withContext(Dispatchers.IO) {
+        val chooser = JFileChooser().apply {
+            isAcceptAllFileFilterUsed = false
+            addChoosableFileFilter(FileNameExtensionFilter("Image files", *fileExtensions.toTypedArray()))
+        }
+
+        val result = chooser.showOpenDialog(null)
+        
+        if (result == JFileChooser.APPROVE_OPTION) chooser.selectedFile else null
     }
 }
