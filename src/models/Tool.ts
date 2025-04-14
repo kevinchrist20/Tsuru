@@ -71,3 +71,7 @@ export function getTools(): Tool[] {
     }
   ];
 }
+
+export function getToolByRoute(route: ToolRoute | string): Tool | undefined {
+  return getTools().find(tool => tool.route === route);
+}
