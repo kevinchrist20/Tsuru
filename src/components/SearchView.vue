@@ -5,11 +5,11 @@ const emit = defineEmits<(e: 'update:modelValue', value: string) => void>();
 </script>
 
 <template>
-  <div class="w-full bg-dark-background rounded-micro shadow-sm">
+  <div class="w-full bg-dark-background rounded-md shadow-sm">
     <div class="relative w-full">
       <input type="text" :value="modelValue"
         @input="emit('update:modelValue', ($event.target as HTMLInputElement)?.value)"
-        class="w-full p-default rounded-micro bg-dark-background text-text-color subtitle2 border-none outline-none focus:ring-1 focus:ring-telegram-blue" 
+        class="w-full p-default rounded-md bg-dark-background text-text-color subtitle2 border-none outline-none focus:ring-1 focus:ring-telegram-blue" 
         :placeholder="placeholder" />
       <span class="absolute right-default top-1/2 transform -translate-y-1/2">
         <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-medium-grey" fill="none" viewBox="0 0 24 24"
