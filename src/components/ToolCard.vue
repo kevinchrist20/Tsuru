@@ -7,13 +7,14 @@ const emit = defineEmits<(e: 'click') => void>()
 </script>
 
 <template>
-  <div class="bg-dark-background rounded-micro p-default shadow-md cursor-pointer w-[350px] h-[200px]"
-    @click="emit('click')">
+  <div class="bg-dark-background rounded-micro shadow-md cursor-pointer"
+       style="width: 350px; height: 200px;"
+       @click="emit('click')">
     <div class="p-default h-full flex flex-col">
       <div class="h-default"></div>
-      <h3 class="text-lg font-semibold text-left">{{ tool.name }}</h3>
+      <h6 class="text-left">{{ tool.name }}</h6>
       <div class="h-small"></div>
-      <p class="text-sm text-medium-grey text-left">{{ tool.sub }}</p>
+      <p class="body2 text-medium-grey text-left">{{ tool.sub }}</p>
     </div>
   </div>
 </template>

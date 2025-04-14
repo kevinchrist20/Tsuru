@@ -1,3 +1,19 @@
+<script setup lang="ts">
+import { ref } from 'vue'
+import { useRouter } from 'vue-router'
+import SearchView from '../components/SearchView.vue'
+import ToolCard from '../components/ToolCard.vue'
+import { Tool, getTools } from '../models/Tool'
+
+const searchValue = ref('')
+const tools = ref<Tool[]>(getTools())
+const router = useRouter()
+
+const navigateToTool = (tool: Tool) => {
+  router.push(`/tool/${tool.route}`)
+}
+</script>
+
 <template>
   <div class="p-default min-h-screen">
     <div class="max-w-6xl mx-auto">
@@ -19,32 +35,3 @@
   </div>
 </template>
 
-<script lang="ts">
-import { defineComponent, ref } from 'vue'
-import { useRouter } from 'vue-router'
-import SearchView from '../components/SearchView.vue'
-import ToolCard from '../components/ToolCard.vue'
-import { Tool, getTools } from '../models/Tool'
-
-export default defineComponent({
-  components: {
-    SearchView,
-    ToolCard
-  },
-  setup() {
-    const searchValue = ref('')
-    const tools = ref<Tool[]>(getTools())
-    const router = useRouter()
-    
-    const navigateToTool = (tool: Tool) => {
-      router.push(`/tool/${tool.route}`)
-    }
-    
-    return {
-      searchValue,
-      tools,
-      navigateToTool
-    }
-  }
-})
-</script>
