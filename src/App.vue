@@ -9,13 +9,11 @@ import { RouterView } from 'vue-router';
 </template>
 
 <style>
-/* Import Inter font from Google Fonts with all weights we need */
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
 
 body {
   background-color: theme('colors.dark-shade');
   color: theme('colors.text-color');
-  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
 }
 
 h1 {

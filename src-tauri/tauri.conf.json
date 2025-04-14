@@ -13,8 +13,9 @@
     "windows": [
       {
         "title": "Tsuru",
-        "width": 1280,
-        "height": 900
+        "width": 1120,
+        "height": 920,
+        "resizable": true
       }
     ],
     "security": {

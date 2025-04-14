@@ -10,7 +10,7 @@ const tools = ref<Tool[]>(getTools())
 const router = useRouter()
 
 const navigateToTool = (tool: Tool) => {
-  router.push(`/tool/${tool.route}`)
+  router.push(`/tools/${tool.route}`)
 }
 </script>
 
