@@ -2,7 +2,24 @@
 
 import { core } from '@tauri-apps/api';
 
-export type TauriCommands = {};
+export type TauriCommands = {
+    encode_base64: {
+        returns: string,
+        args: { input: string }
+    },
+    decode_base64: {
+        returns: string,
+        args: { input: string }
+    },
+    generate_uuid: {
+        returns: string,
+        args: undefined
+    },
+    generate_slug: {
+        returns: string,
+        args: { input: string }
+    }
+};
 
 export function invoke<T extends keyof TauriCommands>(
     cmd: T,
