@@ -53,17 +53,6 @@ const handleClear = () => {
   emit('update:outputText', '')
   showToastMessage('Cleared input and output')
 }
-
-// Input change handlers
-const onInputChange = (e: Event) => {
-  const target = e.target as HTMLTextAreaElement
-  emit('update:inputText', target.value)
-}
-
-const onOutputChange = (e: Event) => {
-  const target = e.target as HTMLTextAreaElement
-  emit('update:outputText', target.value)
-}
 </script>
 
 <template>
@@ -95,28 +84,7 @@ const onOutputChange = (e: Event) => {
       
       <!-- Default Input/Output Area -->
       <slot name="actions">
-        <div class="mt-large">
-          <div class="mb-default">
-            <label class="block mb-small text-text-color body2">Input</label>
-            <textarea 
-              :value="inputText" 
-              @input="onInputChange"
-              class="w-full p-default bg-dark-background text-text-color rounded-md border-none outline-none focus:ring-1 focus:ring-telegram-blue resize-y"
-              rows="4"
-            ></textarea>
-          </div>
-          
-          <div class="mb-default">
-            <label class="block mb-small text-text-color body2">Output</label>
-            <textarea 
-              :value="outputText" 
-              @input="onOutputChange"
-              class="w-full p-default bg-dark-background text-text-color rounded-md border-none outline-none focus:ring-1 focus:ring-telegram-blue resize-y"
-              rows="4"
-              readonly
-            ></textarea>
-          </div>
-          
+        <div class="mt-large">          
           <div class="flex space-x-small">
             <button 
               @click="handleCopy" 
