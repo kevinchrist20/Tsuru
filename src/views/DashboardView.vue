@@ -22,9 +22,9 @@
 <script lang="ts">
 import { defineComponent, ref } from 'vue'
 import { useRouter } from 'vue-router'
-import SearchView from '@/components/SearchView.vue'
-import ToolCard from '@/components/ToolCard.vue'
-import { Tool, getTools } from '@/models/Tool'
+import SearchView from '../components/SearchView.vue'
+import ToolCard from '../components/ToolCard.vue'
+import { Tool, getTools } from '../models/Tool'
 
 export default defineComponent({
   components: {
