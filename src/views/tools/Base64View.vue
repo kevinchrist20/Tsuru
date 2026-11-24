@@ -25,7 +25,8 @@ watch(selectedTab, (newTab) => {
     // Encode tab
     inputText.value = encodeInput.value
     outputText.value = encodeOutput.value
-  } else {
+  }
+  else {
     // Decode tab
     inputText.value = decodeInput.value
     outputText.value = decodeOutput.value
@@ -33,28 +34,31 @@ watch(selectedTab, (newTab) => {
 })
 
 // Handle input changes based on active tab
-const onInputChange = async (event: Event) => {
+async function onInputChange(event: Event) {
   const value = (event.target as HTMLTextAreaElement).value
   inputText.value = value
-  
+
   if (selectedTab.value === 0) {
     // Encode tab
     encodeInput.value = value
     try {
       encodeOutput.value = await Base64Service.encode(value)
       outputText.value = encodeOutput.value
-    } catch (e) {
+    }
+    catch {
       encodeOutput.value = 'Error encoding input'
       outputText.value = encodeOutput.value
     }
-  } else {
+  }
+  else {
     // Decode tab
     decodeInput.value = value
     try {
       decodeOutput.value = await Base64Service.decode(value)
       outputText.value = decodeOutput.value
       decodingError.value = ''
-    } catch (e) {
+    }
+    catch {
       decodingError.value = 'Invalid Base64 input'
       decodeOutput.value = ''
       outputText.value = ''
@@ -63,43 +67,42 @@ const onInputChange = async (event: Event) => {
 }
 
 // Handle output changes (may be needed for two-way binding)
-const onOutputChange = (event: Event) => {
+function onOutputChange(event: Event) {
   const value = (event.target as HTMLTextAreaElement).value
   outputText.value = value
 }
 
 // Handle copy event
-const handleCopy = (text: string) => {
+function handleCopy(text: string) {
   navigator.clipboard.writeText(text)
-  console.log('Text copied:', text)
-  // Here you would show a snackbar/notification
 }
 
 // Handle clear event
-const handleClear = () => {
+function handleClear() {
   if (selectedTab.value === 0) {
     // Clear encode fields
     encodeInput.value = ''
     encodeOutput.value = ''
-  } else {
+  }
+  else {
     // Clear decode fields
     decodeInput.value = ''
     decodeOutput.value = ''
     decodingError.value = ''
   }
-  
+
   inputText.value = ''
   outputText.value = ''
-  console.log('Fields cleared')
 }
 
 // Change tabs
-const changeTab = (tabIndex: number) => {
+function changeTab(tabIndex: number) {
   selectedTab.value = tabIndex
   if (tabIndex === 0) {
     inputText.value = encodeInput.value
     outputText.value = encodeOutput.value
-  } else {
+  }
+  else {
     inputText.value = decodeInput.value
     outputText.value = decodeOutput.value
   }
@@ -107,62 +110,62 @@ const changeTab = (tabIndex: number) => {
 </script>
 
 <template>
-  <BaseView 
-    v-if="tool" 
+  <BaseView
+    v-if="tool"
+    v-model:input-text="inputText"
+    v-model:output-text="outputText"
     :tool="tool"
-    v-model:inputText="inputText"
-    v-model:outputText="outputText"
     @copy="handleCopy"
     @clear="handleClear"
   >
     <!-- Tab navigation -->
     <div class="flex mb-default">
-      <button 
-        class="px-4 py-2 flex-1" 
-        :class="selectedTab === 0 ? 'bg-dark-background text-telegram-blue font-bold' : 'text-light-grey'" 
+      <button
+        class="px-4 py-2 flex-1"
+        :class="selectedTab === 0 ? 'bg-dark-background text-telegram-blue font-bold' : 'text-light-grey'"
         @click="changeTab(0)"
       >
         Encode
       </button>
-      <button 
-        class="px-4 py-2 flex-1" 
-        :class="selectedTab === 1 ? 'bg-dark-background text-telegram-blue font-bold' : 'text-light-grey'" 
+      <button
+        class="px-4 py-2 flex-1"
+        :class="selectedTab === 1 ? 'bg-dark-background text-telegram-blue font-bold' : 'text-light-grey'"
         @click="changeTab(1)"
       >
         Decode
       </button>
     </div>
-    
+
     <!-- Input and Output fields -->
     <div>
       <div class="mb-default">
         <label class="block mb-small text-text-color body2">
           {{ selectedTab === 0 ? 'Input' : 'Input Base64' }}
         </label>
-        <textarea 
-          :value="inputText" 
-          @input="onInputChange"
+        <textarea
+          :value="inputText"
           class="w-full p-default bg-dark-background text-text-color rounded-md border-none outline-none focus:ring-1 focus:ring-telegram-blue resize-y"
           rows="4"
-        ></textarea>
+          @input="onInputChange"
+        />
       </div>
-      
+
       <!-- Error message for decoding -->
       <div v-if="selectedTab === 1 && decodingError" class="mb-default p-default bg-red-900/50 text-red-300 rounded-md">
         {{ decodingError }}
       </div>
-      
+
       <div class="mb-default">
         <label class="block mb-small text-text-color body2">
           {{ selectedTab === 0 ? 'Output Base64' : 'Output String' }}
         </label>
-        <textarea 
-          :value="outputText" 
-          @input="onOutputChange"
+        <textarea
+          :value="outputText"
           class="w-full p-default bg-dark-background text-text-color rounded-md border-none outline-none focus:ring-1 focus:ring-telegram-blue resize-y"
           rows="4"
           readonly
-        ></textarea>
+          @input="onOutputChange"
+        />
       </div>
     </div>
   </BaseView>

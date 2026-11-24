@@ -1,18 +1,24 @@
 <script setup lang="ts">
-import { ref, defineProps, defineEmits } from 'vue'
+import type { Tool } from '../models/Tool'
+import { defineEmits, defineProps, ref } from 'vue'
 import { useRouter } from 'vue-router'
-import { Tool } from '../models/Tool'
 import { copyToClipboard } from '../utils/clipboard'
 
 // Props for the component
 const props = defineProps<{
-  tool: Tool,
-  inputText: string,
+  tool: Tool
+  inputText: string
   outputText: string
 }>()
 
 // Emits
-const emit = defineEmits(['back', 'update:inputText', 'update:outputText', 'copy', 'clear'])
+const emit = defineEmits([
+  'back',
+  'update:inputText',
+  'update:outputText',
+  'copy',
+  'clear',
+])
 
 // State management
 const showInfoModal = ref(false)
@@ -22,13 +28,13 @@ const toastMessage = ref('')
 const router = useRouter()
 
 // Method to handle back navigation
-const handleBack = () => {
+function handleBack() {
   emit('back')
   router.back()
 }
 
 // Toast handling
-const showToastMessage = (message: string) => {
+function showToastMessage(message: string) {
   toastMessage.value = message
   showToast.value = true
   setTimeout(() => {
@@ -37,17 +43,18 @@ const showToastMessage = (message: string) => {
 }
 
 // Action handlers
-const handleCopy = async () => {
+async function handleCopy() {
   const success = await copyToClipboard(props.outputText)
   if (success) {
     showToastMessage('Copied to clipboard')
     emit('copy', props.outputText)
-  } else {
+  }
+  else {
     showToastMessage('Failed to copy to clipboard')
   }
 }
 
-const handleClear = () => {
+function handleClear() {
   emit('clear')
   emit('update:inputText', '')
   emit('update:outputText', '')
@@ -60,56 +67,58 @@ const handleClear = () => {
     <!-- Top App Bar -->
     <header class="bg-dark-background shadow-md p-default flex items-center justify-between">
       <!-- Back button -->
-      <button @click="handleBack" class="text-text-color p-micro">
+      <button class="text-text-color p-micro" @click="handleBack">
         <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
           <path fill-rule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clip-rule="evenodd" />
         </svg>
       </button>
-      
+
       <!-- Title -->
-      <h6 class="text-text-color truncate">{{ tool.name }}</h6>
-      
+      <h6 class="text-text-color truncate">
+        {{ tool.name }}
+      </h6>
+
       <!-- Info button -->
-      <button @click="showInfoModal = true" class="text-text-color p-micro">
+      <button class="text-text-color p-micro" @click="showInfoModal = true">
         <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
           <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2h.01a1 1 0 100-2H9z" clip-rule="evenodd" />
         </svg>
       </button>
     </header>
-    
+
     <!-- Main Content Area -->
     <main class="flex-grow p-default">
       <!-- Custom content from parent -->
-      <slot></slot>
-      
+      <slot />
+
       <!-- Default Input/Output Area -->
       <slot name="actions">
-        <div class="mt-large">          
+        <div class="mt-large">
           <div class="flex space-x-small">
-            <button 
-              @click="handleCopy" 
-              class="bg-telegram-blue hover:bg-opacity-80 text-white py-2 px-4 rounded-md transition-colors duration-300 button"
+            <button
+              class="bg-telegram-blue hover:bg-telegram-blue/80 text-white py-2 px-4 rounded-md transition-colors duration-300 button"
+              @click="handleCopy"
             >
               Copy
             </button>
-            <button 
-              @click="handleClear" 
+            <button
               class="bg-dark-background hover:bg-dark-shade border border-medium-grey text-text-color py-2 px-4 rounded-md transition-colors duration-300 button"
+              @click="handleClear"
             >
               Clear
             </button>
             <!-- Additional tool-specific actions -->
-            <slot name="additional-actions"></slot>
+            <slot name="additional-actions" />
           </div>
         </div>
       </slot>
     </main>
-    
+
     <!-- Bottom Bar (if needed) -->
     <footer v-if="$slots['bottom-bar']" class="bg-dark-background shadow-lg p-default">
-      <slot name="bottom-bar"></slot>
+      <slot name="bottom-bar" />
     </footer>
-    
+
     <!-- Toast Notification -->
     <transition
       enter-active-class="transition duration-300 ease-out"
@@ -119,30 +128,30 @@ const handleClear = () => {
       leave-from-class="transform translate-y-0 opacity-100"
       leave-to-class="transform -translate-y-2 opacity-0"
     >
-      <div 
-        v-if="showToast" 
+      <div
+        v-if="showToast"
         class="fixed top-large inset-x-0 mx-auto w-max max-w-sm bg-telegram-blue text-text-color py-2 px-4 rounded-md shadow-lg body2"
       >
         {{ toastMessage }}
       </div>
     </transition>
-    
+
     <!-- Info Modal -->
-    <div v-if="showInfoModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-default">
+    <div v-if="showInfoModal" class="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-default">
       <div class="bg-dark-background rounded-md shadow-lg max-w-lg w-full max-h-[80vh] overflow-auto">
         <div class="p-default border-b border-gray-700">
           <h6>{{ tool.name }}</h6>
         </div>
-        
+
         <div class="p-default body2 markdown-content">
           <!-- Tool description -->
-          <div v-html="tool.description"></div>
+          <div v-html="tool.description" />
         </div>
-        
+
         <div class="p-default border-t border-gray-700 flex justify-end">
-          <button 
-            @click="showInfoModal = false" 
-            class="bg-telegram-blue hover:bg-opacity-80 text-white py-1 px-3 rounded-md transition-colors duration-300 button"
+          <button
+            class="bg-telegram-blue hover:bg-telegram-blue/80 text-white py-1 px-3 rounded-md transition-colors duration-300 button"
+            @click="showInfoModal = false"
           >
             Close
           </button>
@@ -156,14 +165,14 @@ const handleClear = () => {
 .markdown-content :deep(pre) {
   background-color: #272822;
   color: #f8f8f2;
-  padding: theme('spacing.default');
-  border-radius: theme('borderRadius.md');
+  padding: var(--spacing-default);
+  border-radius: var(--radius-md);
   overflow-x: auto;
-  margin: theme('spacing.default') 0;
+  margin: var(--spacing-default) 0;
 }
 
 .markdown-content :deep(a) {
-  color: theme('colors.telegram-blue');
+  color: var(--color-telegram-blue);
   text-decoration: none;
 }
 
@@ -171,16 +180,16 @@ const handleClear = () => {
   background-color: #272822;
   color: #f8f8f2;
   padding: 0.2em 0.4em;
-  border-radius: theme('borderRadius.md');
+  border-radius: var(--radius-md);
 }
 
 .markdown-content :deep(p) {
-  margin-bottom: theme('spacing.default');
+  margin-bottom: var(--spacing-default);
 }
 
 .markdown-content :deep(ul),
 .markdown-content :deep(ol) {
-  padding-left: theme('spacing.large');
-  margin-bottom: theme('spacing.default');
+  padding-left: var(--spacing-large);
+  margin-bottom: var(--spacing-default);
 }
 </style>

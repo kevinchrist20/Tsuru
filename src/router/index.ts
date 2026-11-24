@@ -8,20 +8,20 @@ const router = createRouter({
     {
       path: '/',
       name: 'Dashboard',
-      component: DashboardView
+      component: DashboardView,
     },
     {
       path: '/tools/:id',
       name: 'Tool',
       component: Base64View,
-      props: true
+      props: true,
     },
     {
       // Catch-all route for any unmatched routes
       path: '/:pathMatch(.*)*',
-      redirect: '/'
-    }
-  ]
+      redirect: '/',
+    },
+  ],
 })
 
 export default router

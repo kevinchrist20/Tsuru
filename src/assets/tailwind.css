@@ -1,3 +1,69 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
+
+@theme {
+  /* App Theme Colors */
+  --color-app-bg: #fef9ef;
+  --color-app-primary: #227c9d;
+  --color-app-secondary: #17c3b2;
+  --color-app-tertiary: #ffcb77;
+  --color-app-text-primary: #0b132b;
+  --color-app-text-secondary: #333333;
+  --color-dark-background: #21252b;
+  --color-dark-shade: #282c34;
+  --color-dark-blue: #001946;
+  --color-telegram-blue: #30a3e6;
+  --color-text-color: #ffffff;
+  --color-light-grey: #e6eaed;
+  --color-medium-grey: #9cabb8;
+  --color-white-smoke: #f2f2f2;
+  --color-grey: #485c65;
+  --color-red: #cc2f26;
+  --color-dark-red: #8b0000;
+  --color-icon-red: #ff7373;
+  --color-light-red: #ffd7d5;
+  --color-light-blue: #def4fe;
+  --color-light-green: #dbf7e0;
+  --color-deep-green: #2e833c;
+  --color-green: #359846;
+  --color-outline-color: #e8e8e8;
+  --color-secondary-bg: #f4f6f7;
+
+  /* Spacing */
+  --spacing-micro: 4px;
+  --spacing-small: 8px;
+  --spacing-default: 16px;
+  --spacing-large: 24px;
+
+  /* Breakpoints */
+  --breakpoint-sm: 576px;
+  --breakpoint-md: 768px;
+  --breakpoint-lg: 992px;
+  --breakpoint-xl: 1200px;
+  --breakpoint-xxl: 1400px;
+  --breakpoint-uw: 2000px;
+
+  /* Font Weights */
+  --font-weight-light: 300;
+  --font-weight-normal: 400;
+  --font-weight-medium: 500;
+  --font-weight-semibold: 600;
+  --font-weight-bold: 700;
+
+  /* Typography Scale */
+  --text-overline: 0.625rem;
+  --text-caption: 0.75rem;
+  --text-button: 0.875rem;
+  --text-body2: 0.875rem;
+  --text-subtitle2: 0.875rem;
+  --text-body1: 1rem;
+  --text-subtitle1: 1rem;
+  --text-h6: 1.25rem;
+  --text-h5: 1.5rem;
+  --text-h4: 2.125rem;
+  --text-h3: 3rem;
+  --text-h2: 3.688rem;
+  --text-h1: 5.938rem;
+
+  /* Radii */
+  --radius-md: 0.375rem;
+}

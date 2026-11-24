@@ -1,10 +1,13 @@
-import { defineConfig, presetIcons, presetUno } from 'unocss'
+import { defineConfig, presetIcons, presetWind3 } from 'unocss'
 
 export default defineConfig({
-  presets:[presetUno({
-    dark: 'media'
-  }), presetIcons()],
-  shortcuts:[
+  presets: [
+    presetWind3({
+      dark: 'media',
+    }),
+    presetIcons(),
+  ],
+  shortcuts: [
     ['l-btn', 'rounded-full p-2 capitalize'],
     ['l-btn-primary', 'bg-amber text-white'],
     ['l-btn-secondary', ' text-amber border border-amber'],

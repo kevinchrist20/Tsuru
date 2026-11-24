@@ -1,30 +1,30 @@
 export enum ToolRoute {
-  Base64 = "base64",
-  Base64Image = "base64Image",
-  Slugs = "slug",
-  UUID = "uuid"
+  Base64 = 'base64',
+  Base64Image = 'base64Image',
+  Slugs = 'slug',
+  UUID = 'uuid',
 }
 
 export enum ToolCategory {
-  EncodeDecode = "Encoders & Decoders",
-  Converters = "Converters",
-  Cryptography = "Cryptography & Security",
+  EncodeDecode = 'Encoders & Decoders',
+  Converters = 'Converters',
+  Cryptography = 'Cryptography & Security',
 }
 
 export interface Tool {
-  name: string;
-  sub: string;
-  description: string;
-  route: ToolRoute;
-  category: ToolCategory;
-  icon?: string;
+  name: string
+  sub: string
+  description: string
+  route: ToolRoute
+  category: ToolCategory
+  icon?: string
 }
 
 export function getTools(): Tool[] {
   return [
     {
-      name: "Base64 Encoder/Decoder",
-      sub: "Base64 Encoder/Decoder is a utility for converting text to Base64 or decoding Base64 to text. It comprises two modes: Base64 Encoder and Base64 Decoder.",
+      name: 'Base64 Encoder/Decoder',
+      sub: 'Base64 Encoder/Decoder is a utility for converting text to Base64 or decoding Base64 to text. It comprises two modes: Base64 Encoder and Base64 Decoder.',
       description: `
         <p><a href="https://en.wikipedia.org/wiki/Base64"><b>Base64</b></a> is a binary-to-text encoding representing binary data in an ASCII string format. Base64 encoding uses different 64 ASCII characters including uppercase letters A-Z, lowercase letters a-z, 
         digits 0-9, and the special symbols + and / to represent binary data in a text format.</p><br/>
@@ -36,11 +36,11 @@ export function getTools(): Tool[] {
         <p>Paste Base64 in the input field, and the output string will be displayed accordingly.</p>
       `,
       route: ToolRoute.Base64,
-      category: ToolCategory.EncodeDecode
+      category: ToolCategory.EncodeDecode,
     },
     {
-      name: "Base64 Image Encoder/Decoder",
-      sub: "Base64 Image encoding is a versatile tool for converting images to Base64 strings or decoding Base64-encoded images. A Base64 encoded image is the result of converting a binary image to a Base64 string.",
+      name: 'Base64 Image Encoder/Decoder',
+      sub: 'Base64 Image encoding is a versatile tool for converting images to Base64 strings or decoding Base64-encoded images. A Base64 encoded image is the result of converting a binary image to a Base64 string.',
       description: `
         <p><a href="https://en.wikipedia.org/wiki/Base64"><b>Base64 Image</b></a> encoding simplifies the process of encoding images into Base64 strings and decoding Base64-encoded images. 
         Base64 encoding represents binary data in ASCII format, allowing images to be embedded directly into HTML, CSS, or XML files.</p><br/>
@@ -53,25 +53,25 @@ export function getTools(): Tool[] {
         <p>For a large image, this process may take a moment.</p>
       `,
       route: ToolRoute.Base64Image,
-      category: ToolCategory.EncodeDecode
+      category: ToolCategory.EncodeDecode,
     },
     {
-      name: "Slugs",
-      sub: "Slugs Generator",
-      description: "It slugify words to an SEO-friendly and human-readable URL slug for SEO optimization. A URL slug is the part located at the very end of a URL that refers to a page or post on a website.",
+      name: 'Slugs',
+      sub: 'Slugs Generator',
+      description: 'It slugify words to an SEO-friendly and human-readable URL slug for SEO optimization. A URL slug is the part located at the very end of a URL that refers to a page or post on a website.',
       route: ToolRoute.Slugs,
-      category: ToolCategory.EncodeDecode
+      category: ToolCategory.EncodeDecode,
     },
     {
-      name: "UUID",
-      sub: "UUID Generator",
-      description: "UUID is an abbreviation standing for Universally Unique Identifier. A UUID is a 128-bit value used to identify a computer resource to ensure its uniqueness.",
+      name: 'UUID',
+      sub: 'UUID Generator',
+      description: 'UUID is an abbreviation standing for Universally Unique Identifier. A UUID is a 128-bit value used to identify a computer resource to ensure its uniqueness.',
       route: ToolRoute.UUID,
-      category: ToolCategory.EncodeDecode
-    }
-  ];
+      category: ToolCategory.EncodeDecode,
+    },
+  ]
 }
 
 export function getToolByRoute(route: ToolRoute | string): Tool | undefined {
-  return getTools().find(tool => tool.route === route);
+  return getTools().find(tool => tool.route === route)
 }
