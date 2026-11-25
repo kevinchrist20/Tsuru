@@ -11,6 +11,7 @@ defineProps<{ tool: Tool }>()
 
 const urlSafe = ref(false)
 const padding = ref(true)
+const wrap = ref(false)
 
 const base64Labels: CodecLabels = {
   encode: {
@@ -29,6 +30,7 @@ const { mode, input, output, error, loading, setMode, clear, refresh } = useCode
   encode: value => Base64Service.encode(value, {
     urlSafe: urlSafe.value,
     padding: padding.value,
+    wrap: wrap.value,
   }),
   decode: value => Base64Service.decode(value, {
     urlSafe: urlSafe.value,
@@ -36,7 +38,7 @@ const { mode, input, output, error, loading, setMode, clear, refresh } = useCode
   }),
 })
 
-watch([urlSafe, padding], () => refresh())
+watch([urlSafe, padding, wrap], () => refresh())
 </script>
 
 <template>
@@ -66,10 +68,17 @@ watch([urlSafe, padding], () => refresh())
             </span>
           </label>
 
-          <label class="cursor-pointer">
+          <label v-if="mode === 'encode'" class="cursor-pointer">
             <input v-model="padding" type="checkbox" class="peer sr-only">
             <span class="chip cursor-pointer select-none px-3 py-1 text-xs transition-colors duration-200 peer-checked:border-telegram-blue/40 peer-checked:bg-telegram-blue/15 peer-checked:text-telegram-blue peer-focus-visible:ring-2 peer-focus-visible:ring-telegram-blue/50">
               Padding
+            </span>
+          </label>
+
+          <label v-if="mode === 'encode'" class="cursor-pointer">
+            <input v-model="wrap" type="checkbox" class="peer sr-only">
+            <span class="chip cursor-pointer select-none px-3 py-1 text-xs transition-colors duration-200 peer-checked:border-telegram-blue/40 peer-checked:bg-telegram-blue/15 peer-checked:text-telegram-blue peer-focus-visible:ring-2 peer-focus-visible:ring-telegram-blue/50">
+              Wrap lines (76)
             </span>
           </label>
         </div>
