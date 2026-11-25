@@ -1,39 +1,138 @@
 # Tsuru
 
-Tsuru is a desktop app that provides a collection of developer tools designed to assist your workflow. From simple utilities 
-like string manipulation, JSON formatters, validation tools, cryptography and security, encoders and decoders, converters 
-and more. Tsuru covers various categories in real-world programming.
+Tsuru is a desktop app that provides a collection of developer tools designed to assist your workflow. From simple utilities
+like encoders and decoders, generators, JSON formatters, validation tools, cryptography and security, converters and more.
+Tsuru covers various categories in real-world programming — fully offline, no telemetry, no accounts.
+
+Built with **Tauri 2**, **Vue 3**, **TypeScript** and **Tailwind CSS 4**.
 
 ## Features
 
-- **Comprehensive Toolbox**: Tsuru offers a wide range of tools to cater to different programming needs.
-- **Easy to Use**: Each tool is designed with simplicity in mind, ensuring ease of use for developers of all levels.
+- **13 ready-to-use tools** across Encoders & Decoders, Generators and Cryptography & Security.
+- **Easy to Use**: Every tool follows the same layout — encode/decode tabs, live output, copy/clear.
 - **Desktop Application**: Tsuru is a desktop app, providing offline access and convenience for developers.
+- **Typed IPC**: Tauri commands are exposed through auto-generated TypeScript bindings, and structured payloads are exported
+  with [ts-rs](https://github.com/Aleph-Alpha/ts-rs).
+- **Tested**: 90+ Rust unit tests for the codecs, plus a Vitest suite for the shared UI logic.
 
-## Tools
+## Available tools
 
-1. **String Utilities**: Easily manipulate strings with various functions such as encoding, decoding, and formatting.
-2. **JSON Formatter**: Format and beautify JSON data for better readability.
-3. **Validation Tools**: Validate data inputs against predefined rules and patterns.
-4. **Cryptography and Security**: Encrypt and decrypt data, generate hashes, and ensure data security.
-5. **Encoders and Decoders**: Convert data between different encoding formats such as Base64, URL encoding, etc.
-6. **Converters**: Convert data between different formats, such as JSON to XML, CSV to JSON, etc.
-7. *(Add more tools here)*
+### Encoders & Decoders
 
-## Getting Started
+| Tool | Description |
+| --- | --- |
+| Base64 Encoder/Decoder | Text ↔ Base64 with URL-safe alphabet, padding and RFC 2045 line-wrapping options. |
+| Base64 Image Encoder/Decoder | Local JPG/PNG (drag & drop, up to 8 MB) → `data:` URL, and Base64/data URL → image preview. |
+| URL Encoder/Decoder | Percent-encoding in component (`encodeURIComponent`) or full-URL (`encodeURI`) modes. |
+| HTML Entity Encoder/Decoder | Escape `& < > " '` and decode named and numeric character references. |
+| Hex Encoder/Decoder | Text ↔ UTF-8 bytes as hex, with an uppercase output toggle. |
+| Binary Encoder/Decoder | Text ↔ 8-bit binary groups (spaced or compact). |
+| Base32 Encoder/Decoder | RFC 4648 Base32 with an optional padding toggle. |
+| Unicode Escape/Unescape | `\uXXXX` escapes including surrogate pairs, plus `\xXX` and short escapes. |
+| Punycode / IDN Converter | Unicode domains ↔ `xn--` punycode, label by label. |
+| Quoted-Printable Encoder/Decoder | RFC 2045 MIME encoding with 76-character soft breaks. |
 
-To get started with Tsuru, download the latest version from our [website](https://example.com) and install it on your desktop. 
-Then, simply launch the app and explore the available tools.
+### Generators
+
+| Tool | Description |
+| --- | --- |
+| Slugs | SEO-friendly URL slugs with accent transliteration (`deunicode`). |
+| UUID | Version 4 UUIDs, one at a time or in batches of 1 / 5 / 10. |
+
+### Cryptography & Security
+
+| Tool | Description |
+| --- | --- |
+| JWT Decoder | Decode a token's header and payload with pretty-printed JSON. Decode-only — signatures are never verified. |
+
+## Planned tools
+
+The roadmap below covers the tools we intend to add next, inspired by
+[appdevtools.com](https://appdevtools.com/), [quicktype.io/dart](https://quicktype.io/dart/),
+[jsoncrack.com](https://jsoncrack.com/) and Yaml Crack.
+
+### Data & converters
+
+- **JSON Formatter / Validator / Minifier** — beautify and validate JSON with syntax error reporting.
+- **JSON Crack–style visualizer** — explore JSON as an interactive graph, expand/collapse nodes and search.
+- **Yaml Crack–style visualizer** — the same graph explorer experience for YAML, plus YAML ↔ JSON conversion.
+- **JSON → Dart model generator** — quicktype-style class generation from JSON samples for Flutter projects
+  (with more targets like TypeScript/Kotlin to follow).
+- **JSON ↔ XML** and **CSV ↔ JSON** conversion.
+- **Query String Parser** and **URL Parser** — inspect and edit parts of a URL.
+- **Number Base Converter** — binary, octal, decimal, hex and arbitrary bases.
+
+### Text utilities
+
+- **Clean Paste** — strip formatting, smart quotes and invisible characters from clipboard text.
+- **Case Converter** — camelCase, snake_case, kebab-case, PascalCase, CONSTANT_CASE, Title Case.
+- **Text Diff Checker** — side-by-side comparison of two text blocks.
+- **Markdown Previewer** — live-rendered markdown with copy-as-HTML.
+- **Lorem Ipsum Generator** — paragraphs, sentences or words on demand.
+
+### Validation
+
+- **Regex Tester** — pattern testing with match highlighting and capture groups.
+- **Common validators** — email, URL, IPv4/IPv6, credit card (Luhn) and JSON Schema checks.
+
+### Cryptography & Security
+
+- **Hash Generator** — MD5, SHA-1, SHA-256, SHA-512 for text and files.
+- **HMAC Generator** — keyed hashes for the same algorithms.
+- **Password Generator** — configurable length and character sets with strength hints.
+
+### Everyday helpers
+
+- **Unix Timestamp Converter** — epoch ↔ human-readable dates in local time and UTC.
+- **Cron Expression Parser** — human-readable explanations for cron schedules.
+- **Color Converter** — HEX ↔ RGB ↔ HSL with a picker.
+- **QR Code Generator** — offline QR codes for text, URLs and Wi-Fi credentials.
+- **ASCII / Unicode Table** — quick character reference with search.
+
+Have an idea for another tool? Open an issue — the tool registry, shared codec UI and service layers make adding new tools
+straightforward.
+
+## Getting started
+
+### Development
+
+Prerequisites: [Node.js](https://nodejs.org/) 20+, [pnpm](https://pnpm.io/installation) and
+[Rust](https://www.rust-lang.org/tools/install).
+
+```bash
+# Clone the repository
+git clone <repository-url>
+cd Tsuru
+
+# Install dependencies
+pnpm install
+
+# Start the app in development mode
+pnpm launch
+
+# Build a debug binary without bundling
+pnpm tauri build --debug --no-bundle
+```
+
+### Useful commands
+
+| Command | Description |
+| --- | --- |
+| `pnpm launch` | Run the Tauri app in development mode. |
+| `pnpm dev` | Start the Vite dev server only (browser preview without Tauri). |
+| `pnpm build` | Type-check with `vue-tsc` and build the frontend. |
+| `pnpm test` | Run the Vitest suite. |
+| `pnpm lint` | Lint and auto-fix with ESLint. |
+| `cargo test` | Run the Rust codec and binding tests (from `src-tauri/`). |
 
 ## Contributing
 
-We welcome contributions from the community to improve and expand Tsuru. If you'd like to contribute, 
+We welcome contributions from the community to improve and expand Tsuru. If you'd like to contribute,
 please see our [Contribution Guidelines](CONTRIBUTING.md) for more information.
 
 ## License
 
 Tsuru is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
-
 
 ## Recommended IDE Setup
 
