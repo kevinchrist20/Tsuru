@@ -1,0 +1,41 @@
+{
+  "name": "tsuru",
+  "type": "module",
+  "version": "0.0.1",
+  "private": true,
+  "packageManager": "pnpm@11.6.0",
+  "description": "Tsuru is a desktop app that provides a collection of developer tools designed to assist your workflow. From simple utilities like string manipulation, JSON formatters, validation tools, cryptography and security, encoders and decoders, converters and more. Tsuru covers various categories in real-world programming.",
+  "scripts": {
+    "dev": "vite",
+    "build": "vue-tsc --noEmit && vite build",
+    "preview": "vite preview",
+    "tauri": "tauri",
+    "launch": "tauri dev",
+    "test": "vitest run",
+    "lint": "eslint . --fix"
+  },
+  "dependencies": {
+    "@fontsource-variable/bricolage-grotesque": "^5.3.0",
+    "@fontsource-variable/chivo-mono": "^5.3.0",
+    "@fontsource-variable/hanken-grotesk": "^5.3.0",
+    "@tauri-apps/api": "^2.12.5",
+    "@tauri-apps/plugin-shell": "^2.6.0",
+    "pinia": "^4.1.0",
+    "vue": "^3.5.46",
+    "vue-router": "^5.5.1"
+  },
+  "devDependencies": {
+    "@antfu/eslint-config": "^10.0.0",
+    "@tailwindcss/vite": "^4.3.5",
+    "@tauri-apps/cli": "^2.12.6",
+    "@vitejs/plugin-vue": "^6.0.11",
+    "@vue/test-utils": "^2.6.0",
+    "eslint": "^10.15.0",
+    "jsdom": "^31.0.1",
+    "tailwindcss": "^4.3.5",
+    "typescript": "~6.0.3",
+    "vite": "^8.3.8",
+    "vitest": "^5.1.1",
+    "vue-tsc": "^3.3.14"
+  }
+}
