@@ -1,7 +1,6 @@
 import process from 'node:process'
 import tailwindcss from '@tailwindcss/vite'
 import vue from '@vitejs/plugin-vue'
-import UnoCSS from 'unocss/vite'
 import { defineConfig } from 'vite'
 
 const host = process.env.TAURI_DEV_HOST
@@ -10,7 +9,6 @@ const host = process.env.TAURI_DEV_HOST
 export default defineConfig({
   plugins: [
     vue(),
-    UnoCSS(),
     tailwindcss(),
   ],
 

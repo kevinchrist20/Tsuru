@@ -2,7 +2,9 @@ import { createPinia } from 'pinia'
 import { createApp } from 'vue'
 import App from './App.vue'
 import router from './router'
-import 'virtual:uno.css'
+import '@fontsource-variable/bricolage-grotesque'
+import '@fontsource-variable/chivo-mono'
+import '@fontsource-variable/hanken-grotesk'
 import './assets/tailwind.css'
 
 const pinia = createPinia()
