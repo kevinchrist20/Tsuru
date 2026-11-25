@@ -66,7 +66,7 @@ jobs:
           VERSION: ${{ inputs.version }}
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
-          base: tauri
+          base: main
           branch: release/version-${{ inputs.version }}
           delete-branch: false
           title: 'chore(release): bump version to ${{ inputs.version }}'
