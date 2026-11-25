@@ -3,4 +3,7 @@ pub mod base64;
 pub mod binary;
 pub mod hex;
 pub mod html;
+pub mod punycode;
+pub mod quoted_printable;
+pub mod unicode;
 pub mod url;

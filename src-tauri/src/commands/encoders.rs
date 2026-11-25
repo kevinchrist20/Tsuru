@@ -1,8 +1,10 @@
-use crate::services::encoders::{base32, base64, binary, hex, html, url};
+use crate::services::encoders::{
+    base32, base64, binary, hex, html, punycode, quoted_printable, unicode, url,
+};
 
 #[tauri::command]
-pub fn encode_base64(input: &str, url_safe: bool, padding: bool) -> String {
-    base64::encode(input, url_safe, padding)
+pub fn encode_base64(input: &str, url_safe: bool, padding: bool, wrap: bool) -> String {
+    base64::encode(input, url_safe, padding, wrap)
 }
 
 #[tauri::command]
@@ -58,4 +60,34 @@ pub fn encode_base32(input: &str, padding: bool) -> String {
 #[tauri::command]
 pub fn decode_base32(input: &str) -> Result<String, String> {
     base32::decode(input)
+}
+
+#[tauri::command]
+pub fn encode_unicode(input: &str) -> String {
+    unicode::encode(input)
+}
+
+#[tauri::command]
+pub fn decode_unicode(input: &str) -> Result<String, String> {
+    unicode::decode(input)
+}
+
+#[tauri::command]
+pub fn encode_punycode(input: &str) -> Result<String, String> {
+    punycode::encode(input)
+}
+
+#[tauri::command]
+pub fn decode_punycode(input: &str) -> Result<String, String> {
+    punycode::decode(input)
+}
+
+#[tauri::command]
+pub fn encode_quoted_printable(input: &str) -> String {
+    quoted_printable::encode(input)
+}
+
+#[tauri::command]
+pub fn decode_quoted_printable(input: &str) -> Result<String, String> {
+    quoted_printable::decode(input)
 }

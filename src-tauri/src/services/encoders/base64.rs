@@ -15,8 +15,24 @@ fn encoding_engine(url_safe: bool, padding: bool) -> GeneralPurpose {
     }
 }
 
-pub fn encode(input: &str, url_safe: bool, padding: bool) -> String {
-    encoding_engine(url_safe, padding).encode(input)
+pub fn encode(input: &str, url_safe: bool, padding: bool, wrap: bool) -> String {
+    let encoded = encoding_engine(url_safe, padding).encode(input);
+
+    if wrap {
+        wrap_lines(&encoded, 76)
+    } else {
+        encoded
+    }
+}
+
+/// RFC 2045 limits encoded lines to 76 characters including the soft break.
+fn wrap_lines(encoded: &str, width: usize) -> String {
+    encoded
+        .as_bytes()
+        .chunks(width)
+        .map(|chunk| std::str::from_utf8(chunk).expect("Base64 output is ASCII"))
+        .collect::<Vec<&str>>()
+        .join("\r\n")
 }
 
 pub fn decode(input: &str, url_safe: bool, _padding: bool) -> Result<String, String> {
@@ -58,18 +74,18 @@ mod tests {
 
     #[test]
     fn encodes_standard_with_padding() {
-        assert_eq!(encode("hello", false, true), "aGVsbG8=");
+        assert_eq!(encode("hello", false, true, false), "aGVsbG8=");
     }
 
     #[test]
     fn encodes_standard_without_padding() {
-        assert_eq!(encode("hello", false, false), "aGVsbG8");
+        assert_eq!(encode("hello", false, false, false), "aGVsbG8");
     }
 
     #[test]
     fn encodes_url_safe_alphabet() {
-        assert_eq!(encode("???", false, true), "Pz8/");
-        assert_eq!(encode("???", true, true), "Pz8_");
+        assert_eq!(encode("???", false, true, false), "Pz8/");
+        assert_eq!(encode("???", true, true, false), "Pz8_");
     }
 
     #[test]
@@ -95,9 +111,27 @@ mod tests {
     }
 
     #[test]
+    fn wraps_long_output_at_76_characters() {
+        let text = "a".repeat(200);
+        let wrapped = encode(&text, false, true, true);
+
+        for line in wrapped.split("\r\n") {
+            assert!(line.chars().count() <= 76, "line too long: {}", line.len());
+        }
+
+        assert!(wrapped.contains("\r\n"));
+        assert_eq!(decode(&wrapped, false, true).unwrap(), text);
+    }
+
+    #[test]
+    fn wrapping_short_input_changes_nothing() {
+        assert_eq!(encode("hello", false, true, true), "aGVsbG8=");
+    }
+
+    #[test]
     fn decodes_empty_input() {
         assert_eq!(decode("", false, true).unwrap(), "");
-        assert_eq!(encode("", false, true), "");
+        assert_eq!(encode("", false, true, false), "");
     }
 
     #[test]
@@ -115,17 +149,17 @@ mod tests {
     #[test]
     fn round_trips_unicode() {
         let text = "Tsuru 🦢 – こんにちは";
-        let encoded = encode(text, false, true);
+        let encoded = encode(text, false, true, false);
         assert_eq!(decode(&encoded, false, true).unwrap(), text);
 
-        let url_safe = encode(text, true, false);
+        let url_safe = encode(text, true, false, false);
         assert_eq!(decode(&url_safe, true, false).unwrap(), text);
     }
 
     #[test]
     fn round_trips_large_input() {
         let text = "tsuru".repeat(200_000);
-        let encoded = encode(&text, false, true);
+        let encoded = encode(&text, false, true, false);
         assert_eq!(decode(&encoded, false, true).unwrap(), text);
     }
 }
