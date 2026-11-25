@@ -1,3 +1,5 @@
+export type CodecMode = 'encode' | 'decode'
+
 export interface CodecLabelSet {
   tab: string
   input: string

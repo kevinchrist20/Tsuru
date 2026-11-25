@@ -34,7 +34,9 @@ export function getTools(): Tool[] {
         <p>Enter text in the input field, and the output Base64 will be displayed accordingly.</p><br/>
  
         <p><b>Base64 Decoder</b> - Reverses the process, converting Base64 encoded data back into its original form, facilitating data transfer and interpretation across different platforms.</p>
-        <p>Paste Base64 in the input field, and the output string will be displayed accordingly.</p>
+        <p>Paste Base64 in the input field, and the output string will be displayed accordingly.</p><br/>
+
+        <p><b>Options</b> - Enable the URL-safe alphabet for URL- and filename-friendly output, or disable padding to omit trailing <code>=</code> characters.</p>
       `,
       route: ToolRoute.Base64,
       category: ToolCategory.EncodeDecode,

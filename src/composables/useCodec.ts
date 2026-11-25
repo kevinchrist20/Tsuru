@@ -1,8 +1,7 @@
 import type { ComputedRef, Ref, WritableComputedRef } from 'vue'
+import type { CodecMode } from '../types/codec'
 import { computed, reactive, ref, watch } from 'vue'
 import { extractErrorMessage } from '../utils/error'
-
-export type CodecMode = 'encode' | 'decode'
 
 export interface UseCodecOptions {
   encode: (input: string) => Promise<string>
@@ -25,6 +24,7 @@ interface UseCodecReturn {
   loading: Ref<boolean>
   setMode: (mode: CodecMode) => void
   clear: () => void
+  refresh: () => void
 }
 
 export function useCodec(options: UseCodecOptions): UseCodecReturn {
@@ -144,6 +144,10 @@ export function useCodec(options: UseCodecOptions): UseCodecReturn {
     states[mode.value] = { input: '', output: '', error: '' }
   }
 
+  function refresh() {
+    schedule(mode.value, states[mode.value].input)
+  }
+
   return {
     mode,
     input,
@@ -152,5 +156,6 @@ export function useCodec(options: UseCodecOptions): UseCodecReturn {
     loading,
     setMode,
     clear,
+    refresh,
   }
 }

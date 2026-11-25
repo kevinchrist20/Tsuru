@@ -5,15 +5,19 @@ import { core } from '@tauri-apps/api';
 export type TauriCommands = {
     encode_base64: {
         returns: string,
-        args: { input: string }
+        args: { input: string, urlSafe: boolean, padding: boolean }
     },
     decode_base64: {
         returns: string,
-        args: { input: string }
+        args: { input: string, urlSafe: boolean, padding: boolean }
     },
     generate_uuid: {
         returns: string,
         args: undefined
+    },
+    generate_uuids: {
+        returns: string[],
+        args: { count: number }
     },
     generate_slug: {
         returns: string,

@@ -1,6 +1,6 @@
 # Encoders & Decoders Plan
 
-Status: Phase 0 complete
+Status: Phase 1 complete
 Last updated: 2026-11-25
 Scope: Tsuru desktop app (Tauri 2 + Vue 3)
 
@@ -19,26 +19,27 @@ The plan has three outcomes:
 
 | Tool | Route | Backend | Frontend | Status |
 |---|---|---|---|---|
-| Base64 text | `base64` | `encode_base64`, `decode_base64` | `Base64View.vue` + `CodecPanel` | Working |
-| Base64 image | `base64Image` | None | Coming-soon fallback | Metadata only |
-| Slugs | `slug` | `generate_slug` | Coming-soon fallback | Command exists, no view |
-| UUID | `uuid` | `generate_uuid` | Coming-soon fallback | Command exists, no view |
+| Base64 text | `base64` | `encode_base64`, `decode_base64` | `Base64View.vue` + `CodecPanel` | Working, with URL-safe/padding toggles |
+| Base64 image | `base64Image` | Browser File API + image sniffing | `Base64ImageView.vue` | Working, local files only |
+| Slugs | `slug` | `generate_slug` | `SlugView.vue` | Working |
+| UUID | `uuid` | `generate_uuid`, `generate_uuids` | `UuidView.vue` | Working, 1/5/10 generator |
 
 Current gaps:
 
-- There is no test coverage for Base64 or the generators.
-- Slug logic is naive: it does not transliterate accented characters, trim leading or
-  trailing hyphens, or collapse every repeated hyphen.
-- Base64 Image, Slugs, and UUID are still waiting on their dedicated views.
 - There is no frontend test runner yet (Vitest is deferred until after parity).
+- Base64 Image does not support URL image fetching or native file dialogs yet.
+- Base64 line wrapping is not implemented.
+- The dashboard does not yet group tools by category or badge unfinished tools.
 
-Resolved in Phase 0:
+Resolved in Phases 0–1:
 
-- `/tools/:id` now resolves through `ToolView` + `toolViews.ts`; unfinished tools show
+- `/tools/:id` resolves through `ToolView` + `toolViews.ts`; unfinished tools show
   `ComingSoonView` instead of the Base64 screen.
-- `Base64View` uses the shared `CodecPanel` + `useCodec` state model.
+- Base64 uses the shared `CodecPanel` + `useCodec` state model.
 - The Base64 service lives under `src/services/encoders/`.
-- Slug and UUID now belong to `ToolCategory.Generators`.
+- Slug and UUID belong to `ToolCategory.Generators`.
+- All four parity tools have working views.
+- Base64, Slug, and UUID services have Rust unit tests.
 
 ## 3. Decisions
 
@@ -79,52 +80,52 @@ Note: copy/clear still live in `BaseView`, which now works directly against the
 codec's writable input/output state. The optional `Tool.status` field was replaced by
 the view registry fallback to avoid duplicating readiness information.
 
-### Phase 1 — Migration parity
+### Phase 1 — Migration parity (complete)
 
 #### 1. Base64 text
 
-- [ ] Keep standard Base64 alphabet and padding as the defaults.
-- [ ] Strip ASCII whitespace before decoding so wrapped input works.
-- [ ] Add user-toggleable URL-safe alphabet and padding options.
-- [ ] Preserve UTF-8 errors as readable messages.
-- [ ] Rust tests: empty input, ASCII, emoji/Unicode, invalid padding, invalid
+- [x] Keep standard Base64 alphabet and padding as the defaults.
+- [x] Strip ASCII whitespace before decoding so wrapped input works.
+- [x] Add user-toggleable URL-safe alphabet and padding options.
+- [x] Preserve UTF-8 errors as readable messages.
+- [x] Rust tests: empty input, ASCII, emoji/Unicode, invalid padding, invalid
       characters, whitespace-wrapped input, large input, URL-safe and no-padding cases.
 
 #### 2. Slugs
 
-- [ ] Build `SlugView.vue` using the existing `generate_slug` command.
-- [ ] Improve slug rules:
-      - transliterate/ignore accents predictably
+- [x] Build `SlugView.vue` using the existing `generate_slug` command.
+- [x] Improve slug rules:
+      - transliterate/ignore accents predictably (`deunicode`)
       - lowercase
       - replace whitespace with one hyphen
       - collapse repeated hyphens
       - trim leading/trailing hyphens
       - drop unsupported punctuation
-- [ ] Move logic into `services/generators.rs` with unit tests.
-- [ ] Add copy/clear and a live output preview.
+- [x] Move logic into `services/generators.rs` with unit tests.
+- [x] Add copy/clear and a live output preview.
 
 #### 3. UUID
 
-- [ ] Build `UuidView.vue` using the existing `generate_uuid` command.
-- [ ] Generate on demand, not on every keystroke.
-- [ ] Add a count selector (1, 5, 10) and copy-all.
-- [ ] Validate v4 format in tests (version nibble and variant bits).
-- [ ] Keep generation in Rust so all UUIDs come from one implementation.
+- [x] Build `UuidView.vue` using the existing `generate_uuid` command.
+- [x] Generate on demand, not on every keystroke.
+- [x] Add a count selector (1, 5, 10) and copy-all.
+- [x] Validate v4 format in tests (version nibble and variant bits).
+- [x] Keep generation in Rust so all UUIDs come from one implementation.
 
 #### 4. Base64 image
 
-- [ ] Build `Base64ImageView.vue` with Encode and Decode tabs.
-- [ ] Encode:
-      - local image picker (`<input type="file" accept="image/*">`)
+- [x] Build `Base64ImageView.vue` with Encode and Decode tabs.
+- [x] Encode:
+      - local image picker (`<input type="file" accept="image/png,image/jpeg">`)
       - accept JPG, PNG, JPEG (match DevUtils)
       - enforce an 8 MB limit
       - show image preview and `data:<mime>;base64,...` output
-- [ ] Decode:
+- [x] Decode:
       - accept a full data URL or raw Base64
-      - detect MIME type where possible
+      - detect MIME type from magic bytes
       - show an image preview
       - show a clear error for malformed or non-image input
-- [ ] Use browser APIs (`FileReader`, `Blob`, `URL.createObjectURL`) for the MVP.
+- [x] Use browser APIs (`FileReader`, `Blob`, `URL.createObjectURL`) for the MVP.
 - [ ] Add native file dialog / save-to-file later with Tauri plugins.
 
 ### Phase 2 — Additional text codecs
@@ -190,25 +191,31 @@ Rules:
 src/
   components/codec/
     CodecPanel.vue
+    ModeTabs.vue
+    ValuePanel.vue
   composables/
     useCodec.ts
+  types/
+    codec.ts
   services/encoders/
     base64.service.ts
     base64-image.service.ts
-    slug.service.ts
-    uuid.service.ts
     url.service.ts
     html.service.ts
     hex.service.ts
     binary.service.ts
     base32.service.ts
-    jwt.service.ts
+  services/generators/
+    slug.service.ts
+    uuid.service.ts
   views/tools/
     ToolView.vue
     Base64View.vue
     Base64ImageView.vue
     SlugView.vue
     UuidView.vue
+    ComingSoonView.vue
+    ToolNotFoundView.vue
 ```
 
 ### Data flow
@@ -298,10 +305,10 @@ pnpm tauri build --debug --no-bundle
 ## 9. Ordered task list
 
 1. [x] Foundation: `ToolView` registry, route fix, `CodecPanel`, `useCodec`, error utility.
-2. [x] Refactor Base64 onto the shared stack. Rust tests remain part of Phase 1.
-3. [ ] Slug view + improved service + tests.
-4. [ ] UUID view + tests.
-5. [ ] Base64 image view + file/size/preview handling.
+2. [x] Refactor Base64 onto the shared stack; add Rust tests and URL-safe/padding toggles.
+3. [x] Slug view + improved service + tests.
+4. [x] UUID view + tests.
+5. [x] Base64 image view + file/size/preview handling.
 6. [ ] URL encode/decode.
 7. [ ] HTML entities.
 8. [ ] Hex.
@@ -324,8 +331,12 @@ pnpm tauri build --debug --no-bundle
 
 ## 11. Remaining decisions
 
-1. Base64 defaults: standard alphabet and padding enabled; both toggles opt-out.
-2. Slug transliteration: use a crate or a small deterministic ASCII map?
-3. UUID UI: counts of 1/5/10 and newline-separated copy-all — confirm.
-4. Should dashboard cards for unfinished tools show a "Coming soon" badge?
-5. Base64 image MIME detection: infer from data URL prefix, file extension, or sniffing?
+1. Base64 defaults are standard alphabet with padding enabled; confirm these stay the
+   defaults when presets are added later.
+2. Slug transliteration uses `deunicode`; confirm whether Japanese/Chinese output should
+   keep romanization or fall back to pinyin/romaji settings.
+3. UUID UI ships with counts 1/5/10 and newline-separated copy-all.
+4. Should dashboard cards for unfinished tools show a "Coming soon" badge? Currently
+   they navigate to `ComingSoonView`.
+5. Base64 Image encode accepts JPG/PNG only; decode sniffs PNG, JPEG, GIF, and WebP.
+   Decide whether encode should support GIF/WebP too.
