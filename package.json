@@ -1,7 +1,7 @@
 {
   "name": "tsuru",
   "type": "module",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "private": true,
   "packageManager": "pnpm@11.6.0",
   "description": "Tsuru is a desktop app that provides a collection of developer tools designed to assist your workflow. From simple utilities like string manipulation, JSON formatters, validation tools, cryptography and security, encoders and decoders, converters and more. Tsuru covers various categories in real-world programming.",
