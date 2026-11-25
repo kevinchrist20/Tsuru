@@ -33,6 +33,7 @@ pub fn run() {
             encoders::encode_base64,
             encoders::decode_base64,
             generators::generate_uuid,
+            generators::generate_uuids,
             generators::generate_slug
         ])
         .run(tauri::generate_context!())

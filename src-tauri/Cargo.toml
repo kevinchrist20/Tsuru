@@ -26,6 +26,7 @@ tauri-plugin-shell = "2.6.0"
 ts-rs = "12.0.1"
 base64 = "0.23.1"
 uuid = { version = "1.29.3", features = ["v4", "fast-rng"] } # If Tsuru ever adds features like: Generating API tokens, Generating secure keys, Doing anything in auth or encryption
+deunicode = "1.6.2"
 
 [dev-dependencies]
 syn = { version = "3.0.10", features = ["full"] }
