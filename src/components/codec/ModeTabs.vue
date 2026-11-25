@@ -21,16 +21,16 @@ const tabs = [
 </script>
 
 <template>
-  <div class="flex mb-default" role="tablist" aria-label="Codec mode">
+  <div class="mb-default flex rounded-lg border border-hairline bg-dark-background p-1" role="tablist" aria-label="Codec mode">
     <button
       v-for="tab in tabs"
       :key="tab.mode"
       type="button"
       role="tab"
-      class="px-4 py-2 flex-1 rounded-t-md transition-colors"
+      class="flex-1 rounded-md px-4 py-1.5 text-sm font-medium transition-colors duration-200"
       :class="modelValue === tab.mode
-        ? 'bg-dark-background text-telegram-blue font-bold'
-        : 'text-light-grey hover:bg-dark-background/50'"
+        ? 'bg-telegram-blue text-white'
+        : 'text-medium-grey hover:bg-white/5 hover:text-text-color'"
       :aria-selected="modelValue === tab.mode"
       @click="emit('update:modelValue', tab.mode)"
     >

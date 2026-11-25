@@ -21,15 +21,18 @@ async function generate() {
 
   try {
     const values = await UuidService.generateMany(count.value)
+
     if (id !== requestId) {
       return
     }
+
     output.value = values.join('\n')
   }
   catch (err) {
     if (id !== requestId) {
       return
     }
+
     output.value = ''
     error.value = extractErrorMessage(err, 'Could not generate UUIDs.')
   }
@@ -55,36 +58,63 @@ function reset() {
     input-text=""
     @clear="reset"
   >
-    <div class="bg-dark-background rounded-md p-default mb-default">
-      <div class="flex flex-wrap items-end gap-default">
+    <div class="card p-default">
+      <div class="flex flex-wrap items-end justify-between gap-default">
         <div>
-          <label for="uuid-count" class="block mb-small text-text-color body2">
+          <label for="uuid-count" class="mb-small block body2 text-medium-grey">
             How many?
           </label>
-          <select
-            id="uuid-count"
-            v-model.number="count"
-            class="bg-dark-background text-text-color border border-medium-grey rounded-md p-small outline-none focus:ring-1 focus:ring-telegram-blue body2"
-            :disabled="loading"
-          >
-            <option :value="1">
-              1
-            </option>
-            <option :value="5">
-              5
-            </option>
-            <option :value="10">
-              10
-            </option>
-          </select>
+
+          <div class="relative">
+            <select
+              id="uuid-count"
+              v-model.number="count"
+              class="select w-32"
+              :disabled="loading"
+            >
+              <option :value="1">
+                1
+              </option>
+              <option :value="5">
+                5
+              </option>
+              <option :value="10">
+                10
+              </option>
+            </select>
+
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              class="pointer-events-none absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 text-medium-grey"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              aria-hidden="true"
+            >
+              <path d="m6 9 6 6 6-6" />
+            </svg>
+          </div>
         </div>
 
-        <button
-          type="button"
-          class="bg-telegram-blue hover:bg-telegram-blue/80 text-white py-2 px-4 rounded-md transition-colors duration-300 button disabled:opacity-50 disabled:cursor-not-allowed"
-          :disabled="loading"
-          @click="generate"
-        >
+        <button type="button" class="btn btn-primary" :disabled="loading" @click="generate">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            class="h-4 w-4"
+            :class="loading ? 'animate-spin' : ''"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            aria-hidden="true"
+          >
+            <path d="M21 12a9 9 0 1 1-2.64-6.36" />
+            <path d="M21 3v5h-5" />
+          </svg>
           {{ loading ? 'Generating…' : 'Generate' }}
         </button>
       </div>
@@ -92,26 +122,46 @@ function reset() {
 
     <div
       v-if="error"
-      class="mb-default p-default bg-red-900/50 text-red-300 rounded-md body2"
+      class="alert-danger mt-default"
       role="alert"
     >
-      {{ error }}
+      <svg xmlns="http://www.w3.org/2000/svg" class="mt-0.5 h-4 w-4 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z" />
+        <path d="M12 9v4" />
+        <path d="M12 17h.01" />
+      </svg>
+      <span>{{ error }}</span>
     </div>
 
-    <div class="mb-default">
-      <label for="uuid-output" class="block mb-small text-text-color body2">
-        UUIDs
-      </label>
+    <div class="mt-default">
+      <div class="mb-small flex items-center justify-between">
+        <label for="uuid-output" class="block body2 text-text-color">
+          UUIDs
+        </label>
+        <span v-if="output" class="chip">
+          {{ output.split('\n').length }} generated
+        </span>
+      </div>
+
+      <div
+        v-if="!output && !loading"
+        class="rounded-md border border-dashed border-medium-grey/30 bg-dark-background/50 p-large text-center body2 text-medium-grey"
+      >
+        Press <span class="font-medium text-text-color">Generate</span> to create UUIDs
+      </div>
+
       <textarea
+        v-else
         id="uuid-output"
         :value="output"
-        class="w-full p-default bg-dark-background text-text-color rounded-md border-none outline-none focus:ring-1 focus:ring-telegram-blue resize-y font-mono"
-        rows="8"
+        class="field w-full resize-y font-mono"
+        rows="6"
         spellcheck="false"
         readonly
       />
-      <p class="caption text-medium-grey mt-small">
-        Generated UUIDs use version 4 (random).
+
+      <p class="caption mt-small text-medium-grey">
+        Version 4 · random
       </p>
     </div>
   </BaseView>

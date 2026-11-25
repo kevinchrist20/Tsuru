@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import type { Tool } from '../../models/Tool'
+import type { ParsedImage } from '../../services/encoders/base64-image.service'
 import type { CodecMode } from '../../types/codec'
 import { computed, ref, watch } from 'vue'
 import BaseView from '../../components/BaseView.vue'
@@ -18,13 +19,16 @@ defineProps<{ tool: Tool }>()
 
 const mode = ref<CodecMode>('encode')
 const fileInput = ref<HTMLInputElement | null>(null)
+const dragActive = ref(false)
 const fileName = ref('')
 const fileSize = ref(0)
+const encodeMime = ref('')
 const encodeOutput = ref('')
 const encodeError = ref('')
 const encoding = ref(false)
 const decodeInput = ref('')
 const decodeOutput = ref('')
+const decodeInfo = ref<ParsedImage | null>(null)
 const decodeError = ref('')
 const decoding = ref(false)
 
@@ -42,7 +46,60 @@ const fileSizeLabel = computed(() => fileSize.value > 0
   ? formatBytes(fileSize.value)
   : '')
 
-async function onFileChange(event: Event) {
+function resetFileInput() {
+  if (fileInput.value) {
+    fileInput.value.value = ''
+  }
+}
+
+function handleFile(file: File) {
+  encodeRequestId += 1
+  const id = encodeRequestId
+
+  encodeError.value = ''
+  encodeOutput.value = ''
+  encodeMime.value = ''
+  fileName.value = file.name
+  fileSize.value = file.size
+
+  if (!isAcceptedImage(file)) {
+    encodeError.value = 'Choose a JPG or PNG image.'
+    encoding.value = false
+    return
+  }
+
+  if (file.size > MAX_IMAGE_BYTES) {
+    encodeError.value = 'Image must be 8 MB or smaller.'
+    encoding.value = false
+    return
+  }
+
+  encoding.value = true
+
+  void readImageAsDataUrl(file)
+    .then((rawDataUrl) => {
+      if (id !== encodeRequestId) {
+        return
+      }
+
+      const parsed = parseImageInput(rawDataUrl)
+      encodeOutput.value = parsed.dataUrl
+      encodeMime.value = parsed.mime
+    })
+    .catch((err) => {
+      if (id !== encodeRequestId) {
+        return
+      }
+      encodeError.value = extractErrorMessage(err, 'Could not encode this image.')
+    })
+    .finally(() => {
+      if (id === encodeRequestId) {
+        encoding.value = false
+      }
+    })
+}
+
+function onFileChange(event: Event) {
   const input = event.target as HTMLInputElement
   const file = input.files?.[0]
 
@@ -50,46 +107,16 @@ async function onFileChange(event: Event) {
     return
   }
 
-  encodeRequestId += 1
-  const id = encodeRequestId
-  encodeError.value = ''
-  encodeOutput.value = ''
-  fileName.value = file.name
-  fileSize.value = file.size
+  input.value = ''
+  handleFile(file)
+}
 
-  if (!isAcceptedImage(file)) {
-    encodeError.value = 'Choose a JPG or PNG image.'
-    input.value = ''
-    encoding.value = false
-    return
-  }
+function onDrop(event: DragEvent) {
+  dragActive.value = false
+  const file = event.dataTransfer?.files?.[0]
 
-  if (file.size > MAX_IMAGE_BYTES) {
-    encodeError.value = 'Image must be 8 MB or smaller.'
-    input.value = ''
-    encoding.value = false
-    return
-  }
-
-  encoding.value = true
-
-  try {
-    const rawDataUrl = await readImageAsDataUrl(file)
-    if (id !== encodeRequestId) {
-      return
-    }
-    encodeOutput.value = parseImageInput(rawDataUrl).dataUrl
-  }
-  catch (err) {
-    if (id !== encodeRequestId) {
-      return
-    }
-    encodeError.value = extractErrorMessage(err, 'Could not encode this image.')
-  }
-  finally {
-    if (id === encodeRequestId) {
-      encoding.value = false
-    }
+  if (file) {
+    handleFile(file)
   }
 }
 
@@ -104,6 +131,7 @@ function scheduleDecode(value: string) {
 
   if (!value.trim()) {
     decodeOutput.value = ''
+    decodeInfo.value = null
     decodeError.value = ''
     return
   }
@@ -116,17 +144,22 @@ function scheduleDecode(value: string) {
 
     try {
       const parsed = parseImageInput(value)
+
       if (id !== decodeRequestId) {
         return
       }
+
       decodeOutput.value = parsed.dataUrl
+      decodeInfo.value = parsed
       decodeError.value = ''
     }
     catch (err) {
       if (id !== decodeRequestId) {
         return
       }
+
       decodeOutput.value = ''
+      decodeInfo.value = null
       decodeError.value = extractErrorMessage(err, 'Could not decode this image.')
     }
     finally {
@@ -139,17 +172,28 @@ function scheduleDecode(value: string) {
 
 watch(decodeInput, scheduleDecode)
 
+function onEncodePreviewError() {
+  encodeError.value = 'The encoded image could not be rendered.'
+}
+
+function onDecodePreviewError() {
+  decodeRequestId += 1
+  decoding.value = false
+  decodeOutput.value = ''
+  decodeInfo.value = null
+  decodeError.value = 'The decoded data is not a renderable image.'
+}
+
 function clearActive() {
   if (mode.value === 'encode') {
     encodeRequestId += 1
     encoding.value = false
     encodeOutput.value = ''
+    encodeMime.value = ''
     encodeError.value = ''
     fileName.value = ''
     fileSize.value = 0
-    if (fileInput.value) {
-      fileInput.value.value = ''
-    }
+    resetFileInput()
     return
   }
 
@@ -157,11 +201,13 @@ function clearActive() {
     clearTimeout(decodeTimer)
     decodeTimer = undefined
   }
+
   decodeRequestId += 1
+  decoding.value = false
   decodeInput.value = ''
   decodeOutput.value = ''
+  decodeInfo.value = null
   decodeError.value = ''
-  decoding.value = false
 }
 </script>
 
@@ -175,58 +221,93 @@ function clearActive() {
     <ModeTabs v-model="mode" />
 
     <div v-if="mode === 'encode'">
-      <div class="bg-dark-background rounded-md p-default mb-default">
-        <label for="base64-image-file" class="block mb-small text-text-color body2">
-          Image file
-        </label>
+      <label
+        for="base64-image-file"
+        class="flex cursor-pointer flex-col items-center justify-center gap-small rounded-lg border border-dashed p-large text-center outline-none transition-colors duration-200 has-[:focus-visible]:border-telegram-blue/60"
+        :class="dragActive
+          ? 'border-telegram-blue/60 bg-telegram-blue/5'
+          : 'border-medium-grey/30 bg-dark-background/50 hover:border-telegram-blue/40 hover:bg-white/[0.03]'"
+        @dragenter.prevent="dragActive = true"
+        @dragover.prevent="dragActive = true"
+        @dragleave="dragActive = false"
+        @drop.prevent="onDrop"
+      >
+        <span class="icon-tile h-11 w-11" aria-hidden="true">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="3" y="3" width="18" height="18" rx="2" />
+            <circle cx="8.5" cy="8.5" r="1.5" />
+            <path d="m21 15-5-5L5 21" />
+          </svg>
+        </span>
+
+        <span class="body2 text-text-color">
+          Choose an image or drop it here
+        </span>
+        <span class="caption text-medium-grey">
+          JPG or PNG · up to 8 MB
+        </span>
+
         <input
           id="base64-image-file"
           ref="fileInput"
           type="file"
+          class="sr-only"
           :accept="IMAGE_ACCEPT"
-          class="block w-full text-medium-grey body2 file:mr-default file:py-2 file:px-4 file:rounded-md file:border-0 file:bg-telegram-blue file:text-white file:font-medium hover:file:bg-telegram-blue/80 file:cursor-pointer"
           @change="onFileChange"
         >
-        <p v-if="fileName" class="caption text-medium-grey mt-small">
-          {{ fileName }}<span v-if="fileSizeLabel"> · {{ fileSizeLabel }}</span>
-        </p>
-        <p class="caption text-medium-grey mt-small">
-          JPG or PNG, up to 8 MB.
-        </p>
+      </label>
+
+      <div v-if="fileName" class="mt-default flex flex-wrap items-center gap-small">
+        <span class="chip max-w-full truncate">
+          {{ fileName }}
+        </span>
+        <span v-if="fileSizeLabel" class="chip">
+          {{ fileSizeLabel }}
+        </span>
+        <span v-if="encodeMime" class="chip">
+          {{ encodeMime }}
+        </span>
       </div>
 
-      <div v-if="encoding" class="mb-default text-medium-grey body2">
+      <div v-if="encoding" class="mt-default flex items-center gap-small body2 text-medium-grey">
+        <span class="spinner" />
         Encoding image…
       </div>
 
       <div
         v-if="encodeError"
-        class="mb-default p-default bg-red-900/50 text-red-300 rounded-md body2"
+        class="alert-danger mt-default"
         role="alert"
       >
-        {{ encodeError }}
+        <svg xmlns="http://www.w3.org/2000/svg" class="mt-0.5 h-4 w-4 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z" />
+          <path d="M12 9v4" />
+          <path d="M12 17h.01" />
+        </svg>
+        <span>{{ encodeError }}</span>
       </div>
 
-      <div v-if="encodeOutput" class="mb-default">
-        <p class="block mb-small text-text-color body2">
+      <div v-if="encodeOutput" class="card mt-default p-default">
+        <p class="mb-small body2 text-medium-grey">
           Preview
         </p>
         <img
           :src="encodeOutput"
           alt="Encoded image preview"
-          class="max-h-64 max-w-full rounded-md border border-medium-grey/30 object-contain"
+          class="mx-auto max-h-64 max-w-full rounded-md object-contain"
+          @error="onEncodePreviewError"
         >
       </div>
 
-      <div class="mb-default">
-        <label for="base64-image-output" class="block mb-small text-text-color body2">
+      <div class="mt-default">
+        <label for="base64-image-output" class="mb-small block body2 text-text-color">
           Output Base64
         </label>
         <textarea
           id="base64-image-output"
           :value="encodeOutput"
-          class="w-full p-default bg-dark-background text-text-color rounded-md border-none outline-none focus:ring-1 focus:ring-telegram-blue resize-y font-mono"
-          rows="8"
+          class="field w-full resize-y font-mono"
+          rows="7"
           spellcheck="false"
           readonly
         />
@@ -234,48 +315,65 @@ function clearActive() {
     </div>
 
     <div v-else>
-      <div class="mb-default">
-        <label for="base64-image-input" class="block mb-small text-text-color body2">
+      <div class="mt-default">
+        <label for="base64-image-input" class="mb-small block body2 text-text-color">
           Input Base64 or data URL
         </label>
         <textarea
           id="base64-image-input"
           v-model="decodeInput"
-          class="w-full p-default bg-dark-background text-text-color rounded-md border-none outline-none focus:ring-1 focus:ring-telegram-blue resize-y font-mono"
-          rows="8"
+          class="field w-full resize-y font-mono"
+          rows="7"
           placeholder="Paste a data:image/...;base64,... URL or raw Base64"
           spellcheck="false"
           autocomplete="off"
         />
       </div>
 
-      <div v-if="decoding" class="mb-default text-medium-grey body2">
+      <div v-if="decoding" class="mt-default flex items-center gap-small body2 text-medium-grey">
+        <span class="spinner" />
         Decoding image…
       </div>
 
       <div
         v-if="decodeError"
-        class="mb-default p-default bg-red-900/50 text-red-300 rounded-md body2"
+        class="alert-danger mt-default"
         role="alert"
       >
-        {{ decodeError }}
+        <svg xmlns="http://www.w3.org/2000/svg" class="mt-0.5 h-4 w-4 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z" />
+          <path d="M12 9v4" />
+          <path d="M12 17h.01" />
+        </svg>
+        <span>{{ decodeError }}</span>
       </div>
 
-      <div class="mb-default">
-        <p class="block mb-small text-text-color body2">
+      <div class="card mt-default p-default">
+        <p class="mb-small body2 text-medium-grey">
           Preview
         </p>
+
         <img
           v-if="decodeOutput"
           :src="decodeOutput"
           alt="Decoded image preview"
-          class="max-h-64 max-w-full rounded-md border border-medium-grey/30 object-contain"
+          class="mx-auto max-h-64 max-w-full rounded-md object-contain"
+          @error="onDecodePreviewError"
         >
         <div
           v-else
-          class="bg-dark-background rounded-md p-large text-center text-medium-grey body2"
+          class="rounded-md border border-dashed border-medium-grey/30 p-large text-center body2 text-medium-grey"
         >
-          Image preview will appear here.
+          Image preview will appear here
+        </div>
+
+        <div v-if="decodeInfo" class="mt-small flex flex-wrap gap-small">
+          <span class="chip">
+            {{ decodeInfo.mime }}
+          </span>
+          <span class="chip">
+            {{ formatBytes(decodeInfo.size) }} decoded
+          </span>
         </div>
       </div>
     </div>

@@ -93,6 +93,7 @@ function reset() {
       input-placeholder="Type or paste text to slugify…"
       :input-rows="5"
       :output-rows="5"
+      output-mono
       :error="error"
       :loading="loading"
     />

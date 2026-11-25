@@ -11,6 +11,8 @@ const props = defineProps<{
   inputPlaceholder?: string
   inputRows?: number
   outputRows?: number
+  inputMono?: boolean
+  outputMono?: boolean
 }>()
 
 const emit = defineEmits<{
@@ -25,18 +27,19 @@ const charCount = computed(() => props.input.length.toLocaleString())
 <template>
   <div>
     <div class="mb-default">
-      <div class="flex items-center justify-between mb-small">
-        <label class="block text-text-color body2" :for="inputId">
+      <div class="mb-small flex items-center justify-between">
+        <label class="block body2 text-text-color" :for="inputId">
           {{ inputLabel }}
         </label>
-        <span class="caption text-medium-grey">
+        <span class="caption tabular-nums text-medium-grey">
           {{ charCount }} chars
         </span>
       </div>
       <textarea
         :id="inputId"
         :value="input"
-        class="w-full p-default bg-dark-background text-text-color rounded-md border-none outline-none focus:ring-1 focus:ring-telegram-blue resize-y"
+        class="field w-full resize-y"
+        :class="inputMono ? 'font-mono' : ''"
         :rows="inputRows ?? 6"
         :placeholder="inputPlaceholder"
         spellcheck="false"
@@ -47,25 +50,32 @@ const charCount = computed(() => props.input.length.toLocaleString())
 
     <div
       v-if="error"
-      class="mb-default p-default bg-red-900/50 text-red-300 rounded-md body2"
+      class="alert-danger"
       role="alert"
     >
-      {{ error }}
+      <svg xmlns="http://www.w3.org/2000/svg" class="mt-0.5 h-4 w-4 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z" />
+        <path d="M12 9v4" />
+        <path d="M12 17h.01" />
+      </svg>
+      <span>{{ error }}</span>
     </div>
 
     <div class="mb-default">
-      <div class="flex items-center justify-between mb-small">
-        <label class="block text-text-color body2" :for="outputId">
+      <div class="mb-small flex items-center justify-between">
+        <label class="block body2 text-text-color" :for="outputId">
           {{ outputLabel }}
         </label>
-        <span v-if="loading" class="caption text-medium-grey">
+        <span v-if="loading" class="caption flex items-center gap-1 text-medium-grey">
+          <span class="spinner" />
           Processing…
         </span>
       </div>
       <textarea
         :id="outputId"
         :value="output"
-        class="w-full p-default bg-dark-background text-text-color rounded-md border-none outline-none focus:ring-1 focus:ring-telegram-blue resize-y"
+        class="field w-full resize-y"
+        :class="outputMono ? 'font-mono' : ''"
         :rows="outputRows ?? 6"
         spellcheck="false"
         readonly

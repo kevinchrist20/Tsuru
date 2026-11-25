@@ -11,6 +11,8 @@ const props = defineProps<{
   labels: CodecLabels
   error?: string
   loading?: boolean
+  inputMono?: boolean
+  outputMono?: boolean
 }>()
 
 const emit = defineEmits<{
@@ -39,6 +41,8 @@ const activeLabels = computed(() => props.labels[props.mode])
       :output-label="activeLabels.output"
       :error="error"
       :loading="loading"
+      :input-mono="inputMono"
+      :output-mono="outputMono"
       @update:input="emit('update:input', $event)"
     />
   </div>
