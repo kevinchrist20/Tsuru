@@ -94,6 +94,105 @@ straightforward.
 
 ## Getting started
 
+### Installation
+
+Download the latest build for your platform from the
+[Releases](https://github.com/kevinchrist20/Tsuru/releases) page.
+
+> Current builds may be unsigned or not notarized yet. Only install artifacts from the
+> official releases page.
+
+#### Verify Downloads (Recommended)
+
+Before installing, verify the checksum of the downloaded file against the release checksum file.
+
+macOS / Linux:
+
+```bash
+shasum -a 256 Tsuru*.dmg
+# or
+sha256sum Tsuru*
+```
+
+Windows (PowerShell):
+
+```powershell
+Get-FileHash .\Tsuru* -Algorithm SHA256
+```
+
+#### macOS (Apple Silicon + Intel)
+
+Choose the correct build:
+
+- Apple Silicon (M1/M2/M3): `aarch64-apple-darwin`
+- Intel: `x86_64-apple-darwin`
+
+Install:
+
+1. Download the `.dmg` for your architecture.
+2. Open it and drag `Tsuru.app` into `Applications`.
+3. Try launching once from `Applications`.
+
+If macOS blocks it because it is not signed/notarized yet:
+
+1. Open `System Settings` → `Privacy & Security`.
+2. In the security section, click `Open Anyway` for Tsuru.
+3. Confirm by clicking `Open`.
+
+Terminal alternative (remove quarantine flag):
+
+```bash
+sudo xattr -dr com.apple.quarantine /Applications/Tsuru.app
+open -a /Applications/Tsuru.app
+```
+
+#### Windows
+
+1. Download the `.msi` or `.exe` installer.
+2. Launch the installer.
+
+If Windows SmartScreen appears:
+
+1. Click `More info` → `Run anyway`.
+
+If the downloaded file is blocked, you can unblock it first:
+
+```powershell
+Unblock-File .\Tsuru*.msi
+# or
+Unblock-File .\Tsuru*.exe
+```
+
+#### Linux
+
+Choose the artifact for your distro:
+
+- `.AppImage` (portable, most distros)
+- `.deb` (Debian/Ubuntu)
+- `.rpm` (Fedora/RHEL/openSUSE)
+
+AppImage:
+
+```bash
+chmod +x Tsuru*.AppImage
+./Tsuru*.AppImage
+```
+
+Debian/Ubuntu:
+
+```bash
+sudo apt install ./tsuru*.deb
+```
+
+Fedora/RHEL/openSUSE:
+
+```bash
+sudo zypper install ./tsuru*.rpm
+```
+
+If your desktop asks for confirmation because the binary is from the internet, allow
+execution and continue.
+
 ### Development
 
 Prerequisites: [Node.js](https://nodejs.org/) 20+, [pnpm](https://pnpm.io/installation) and
@@ -124,6 +223,18 @@ pnpm tauri build --debug --no-bundle
 | `pnpm test` | Run the Vitest suite. |
 | `pnpm lint` | Lint and auto-fix with ESLint. |
 | `cargo test` | Run the Rust codec and binding tests (from `src-tauri/`). |
+
+### Releasing
+
+Releases are cut with the [Release workflow](.github/workflows/release.yml):
+
+1. Run the workflow manually (`workflow_dispatch`) with the version to release
+   (e.g. `0.0.1`).
+2. It bumps `package.json`, `src-tauri/tauri.conf.json` and `src-tauri/Cargo.toml`,
+   opens a version-bump PR against `tauri`, tags `v<version>` and creates the GitHub
+   release from `release_notes.md`.
+3. Build jobs then produce macOS (Apple Silicon + Intel), Windows and Linux artifacts
+   and attach them to the release.
 
 ## Contributing
 

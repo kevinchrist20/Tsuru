@@ -1,0 +1,265 @@
+name: Release
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Release version (without v prefix, e.g. 0.0.1)'
+        required: true
+        type: string
+      prerelease:
+        description: Mark GitHub release as prerelease
+        required: false
+        type: boolean
+        default: false
+
+permissions:
+  contents: write
+  packages: write
+  pull-requests: write
+
+jobs:
+  prepare-version:
+    runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.set-version.outputs.version }}
+      commit_sha: ${{ steps.capture-sha.outputs.commit_sha }}
+      pr_number: ${{ steps.create-pr.outputs.pull-request-number }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Validate version input
+        env:
+          VERSION: ${{ inputs.version }}
+        run: |
+          if [[ ! "$VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+            echo "Invalid version: $VERSION"
+            exit 1
+          fi
+      - name: Update version files
+        id: set-version
+        env:
+          VERSION: ${{ inputs.version }}
+        run: |
+          node -e "const fs=require('fs');const v=process.env.VERSION;const p='package.json';const j=JSON.parse(fs.readFileSync(p,'utf8'));j.version=v;fs.writeFileSync(p,JSON.stringify(j,null,2)+'\n');"
+          node -e "const fs=require('fs');const v=process.env.VERSION;const p='src-tauri/tauri.conf.json';const j=JSON.parse(fs.readFileSync(p,'utf8'));j.version=v;fs.writeFileSync(p,JSON.stringify(j,null,2)+'\n');"
+          awk -v v="$VERSION" '
+            BEGIN { in_package=0; replaced=0 }
+            /^\[package\]/ { in_package=1; print; next }
+            /^\[/ && !/^\[package\]/ { in_package=0 }
+            {
+              if (in_package && !replaced && $1 == "version") {
+                print "version = \"" v "\""
+                replaced=1
+                next
+              }
+              print
+            }
+          ' src-tauri/Cargo.toml > src-tauri/Cargo.toml.tmp
+          mv src-tauri/Cargo.toml.tmp src-tauri/Cargo.toml
+
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+      - name: Commit version bump and open PR
+        id: create-pr
+        uses: peter-evans/create-pull-request@v7
+        env:
+          VERSION: ${{ inputs.version }}
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          base: tauri
+          branch: release/version-${{ inputs.version }}
+          delete-branch: false
+          title: 'chore(release): bump version to ${{ inputs.version }}'
+          commit-message: 'chore(release): bump version to ${{ inputs.version }}'
+          body: |
+            Automated version bump created by release workflow.
+
+            Version: `${{ inputs.version }}`
+          add-paths: |
+            package.json
+            src-tauri/tauri.conf.json
+            src-tauri/Cargo.toml
+      - name: Capture release commit sha
+        id: capture-sha
+        run: |
+          if [ -n "${{ steps.create-pr.outputs.pull-request-head-sha }}" ]; then
+            echo "commit_sha=${{ steps.create-pr.outputs.pull-request-head-sha }}" >> $GITHUB_OUTPUT
+          else
+            echo "commit_sha=$(git rev-parse HEAD)" >> $GITHUB_OUTPUT
+          fi
+
+  create-tag:
+    needs: prepare-version
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Create Tag
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          VERSION=${{ needs.prepare-version.outputs.version }}
+          TARGET_SHA=${{ needs.prepare-version.outputs.commit_sha }}
+
+          git fetch origin --tags
+
+          if git rev-parse "v$VERSION" >/dev/null 2>&1; then
+            echo "Tag v$VERSION already exists."
+            exit 1
+          fi
+
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          git tag -a "v$VERSION" "$TARGET_SHA" -m "Release v$VERSION"
+          git push origin "v$VERSION"
+
+  create-release:
+    needs: [prepare-version, create-tag]
+    runs-on: ubuntu-latest
+    outputs:
+      release_id: ${{ steps.create_release.outputs.id }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: v${{ needs.prepare-version.outputs.version }}
+      - name: Validate release notes
+        run: |
+          test -f release_notes.md
+          test -s release_notes.md
+
+          # Require minimum structure
+          grep -Eq '^# .+' release_notes.md
+          grep -Eq '^## Highlights' release_notes.md
+
+          # Block common leftovers
+          if grep -Eqi 'TODO|TBD|lorem ipsum|your content here|insert .*here|placeholder|coming soon' release_notes.md; then
+            echo "release_notes.md still contains leftover text."
+            exit 1
+          fi
+
+          # Ensure meaningful body length (excluding headings/blank lines)
+          CONTENT_LINES=$(grep -Evi '^(#|\s*$)' release_notes.md | wc -l | tr -d ' ')
+          if [ "$CONTENT_LINES" -lt 5 ]; then
+            echo "release_notes.md is too short. Add more substantive release details."
+            exit 1
+          fi
+
+          echo "Using release_notes.md as release body"
+          cat release_notes.md
+      - name: Create Release
+        id: create_release
+        uses: ncipollo/release-action@v1
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          tag: v${{ needs.prepare-version.outputs.version }}
+          name: Release v${{ needs.prepare-version.outputs.version }}
+          bodyFile: release_notes.md
+          draft: false
+          prerelease: ${{ inputs.prerelease }}
+
+  build-tauri:
+    needs: [prepare-version, create-tag, create-release]
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - platform: macos-latest
+            args: --target aarch64-apple-darwin
+          - platform: macos-latest
+            args: --target x86_64-apple-darwin
+          - platform: ubuntu-22.04
+            args: ''
+          - platform: windows-latest
+            args: ''
+    runs-on: ${{ matrix.platform }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: v${{ needs.prepare-version.outputs.version }}
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          run_install: false
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+          cache-dependency-path: '**/pnpm-lock.yaml'
+
+      - name: Install Rust stable
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: ${{ matrix.platform == 'macos-latest' && 'aarch64-apple-darwin,x86_64-apple-darwin' || '' }}
+
+      - name: Install dependencies (ubuntu only)
+        if: matrix.platform == 'ubuntu-22.04'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libwebkit2gtk-4.1-dev librsvg2-dev
+
+      - name: Install frontend dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Run frontend tests
+        run: pnpm test
+
+      - name: Run Rust tests (also regenerates command bindings)
+        run: cargo test --manifest-path src-tauri/Cargo.toml
+
+      - name: Build Tauri App
+        uses: tauri-apps/tauri-action@v0
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tagName: v${{ needs.prepare-version.outputs.version }}
+          releaseId: ${{ needs.create-release.outputs.release_id }}
+          args: ${{ matrix.args }}
+
+  cleanup-release-artifacts:
+    needs: [prepare-version, create-tag, create-release, build-tauri]
+    if: ${{ always() && (needs.create-tag.result != 'success' || needs.create-release.result != 'success' || needs.build-tauri.result != 'success') }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Delete GitHub release
+        if: ${{ needs.create-release.outputs.release_id != '' }}
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            try {
+              await github.rest.repos.deleteRelease({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                release_id: Number('${{ needs.create-release.outputs.release_id }}')
+              })
+            } catch (error) {
+              core.warning(`Release cleanup skipped: ${error.message}`)
+            }
+
+      - name: Delete release tag
+        if: ${{ needs.create-tag.result == 'success' }}
+        run: |
+          git init
+          git remote add origin "https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git"
+          git push origin ":refs/tags/v${{ needs.prepare-version.outputs.version }}" || true
+
+      - name: Close release pull request
+        if: ${{ needs.prepare-version.outputs.pr_number != '' }}
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            try {
+              await github.rest.pulls.update({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                pull_number: Number('${{ needs.prepare-version.outputs.pr_number }}'),
+                state: 'closed'
+              })
+            } catch (error) {
+              core.warning(`PR cleanup skipped: ${error.message}`)
+            }
