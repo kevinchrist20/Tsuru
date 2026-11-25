@@ -1,8 +1,14 @@
 export enum ToolRoute {
   Base64 = 'base64',
   Base64Image = 'base64Image',
+  Url = 'url',
+  Html = 'html',
+  Hex = 'hex',
+  Binary = 'binary',
+  Base32 = 'base32',
   Slugs = 'slug',
   UUID = 'uuid',
+  Jwt = 'jwt',
 }
 
 export enum ToolCategory {
@@ -59,6 +65,71 @@ export function getTools(): Tool[] {
       category: ToolCategory.EncodeDecode,
     },
     {
+      name: 'URL Encoder/Decoder',
+      sub: 'Percent-encode or decode URLs and URI components, with component and full-URL modes.',
+      description: `
+        <p><a href="https://en.wikipedia.org/wiki/Percent-encoding"><b>Percent-encoding</b></a> (URL encoding) encodes reserved and unsafe characters in a URI so they can be transmitted safely.</p><br/>
+
+        <p><b>URL Encoder</b> - Encodes text so it can appear inside a URL. <b>Component</b> mode matches <code>encodeURIComponent</code> and is right for query values; <b>Full URL</b> mode matches <code>encodeURI</code> and keeps reserved characters like <code>/</code>, <code>?</code> and <code>&amp;</code>.</p><br/>
+
+        <p><b>URL Decoder</b> - Converts percent-encoded text back to its original form.</p>
+      `,
+      route: ToolRoute.Url,
+      category: ToolCategory.EncodeDecode,
+    },
+    {
+      name: 'HTML Entity Encoder/Decoder',
+      sub: 'Escape text for HTML and decode entities like <, & and numeric character references.',
+      description: `
+        <p><b>HTML entities</b> are escape sequences used to safely display characters such as <code>&lt;</code>, <code>&gt;</code> and <code>&amp;</code> in markup.</p><br/>
+
+        <p><b>HTML Entity Encoder</b> - Escapes <code>&amp;</code>, <code>&lt;</code>, <code>&gt;</code>, <code>&quot;</code> and <code>&#39;</code> so text can be embedded in HTML without changing its meaning.</p><br/>
+
+        <p><b>HTML Entity Decoder</b> - Converts named and numeric character references back to text. Unknown entities are left untouched.</p>
+      `,
+      route: ToolRoute.Html,
+      category: ToolCategory.EncodeDecode,
+    },
+    {
+      name: 'Hex Encoder/Decoder',
+      sub: 'Convert text to hexadecimal bytes and back, with optional uppercase output.',
+      description: `
+        <p><b>Hexadecimal</b> is a base-16 representation of binary data, commonly used to inspect bytes.</p><br/>
+
+        <p><b>Hex Encoder</b> - Encodes text as UTF-8 bytes in hexadecimal. Toggle uppercase to switch between <code>0a</code> and <code>0A</code>.</p><br/>
+
+        <p><b>Hex Decoder</b> - Accepts upper or lowercase digits, optional <code>0x</code> prefix and whitespace between byte pairs.</p>
+      `,
+      route: ToolRoute.Hex,
+      category: ToolCategory.EncodeDecode,
+    },
+    {
+      name: 'Binary Encoder/Decoder',
+      sub: 'Convert text to 8-bit binary groups and decode binary back to text.',
+      description: `
+        <p><b>Binary</b> encoding shows the UTF-8 bytes behind a string as <code>0</code>s and <code>1</code>s.</p><br/>
+
+        <p><b>Binary Encoder</b> - Produces space-separated 8-bit groups for each byte of the input.</p><br/>
+
+        <p><b>Binary Decoder</b> - Accepts spaced groups of exactly 8 bits or a compact bit string whose length is a multiple of 8.</p>
+      `,
+      route: ToolRoute.Binary,
+      category: ToolCategory.EncodeDecode,
+    },
+    {
+      name: 'Base32 Encoder/Decoder',
+      sub: 'RFC 4648 Base32 with optional padding.',
+      description: `
+        <p><a href="https://en.wikipedia.org/wiki/Base32"><b>Base32</b></a> encodes binary data with an alphabet of 32 letters and digits, useful in case-insensitive or URL-safe contexts.</p><br/>
+
+        <p><b>Base32 Encoder</b> - Encodes text with the RFC 4648 alphabet. Toggle padding to omit trailing <code>=</code> characters.</p><br/>
+
+        <p><b>Base32 Decoder</b> - Accepts uppercase or lowercase input, with or without padding and whitespace.</p>
+      `,
+      route: ToolRoute.Base32,
+      category: ToolCategory.EncodeDecode,
+    },
+    {
       name: 'Slugs',
       sub: 'Slugs Generator',
       description: 'It slugify words to an SEO-friendly and human-readable URL slug for SEO optimization. A URL slug is the part located at the very end of a URL that refers to a page or post on a website.',
@@ -71,6 +142,19 @@ export function getTools(): Tool[] {
       description: 'UUID is an abbreviation standing for Universally Unique Identifier. A UUID is a 128-bit value used to identify a computer resource to ensure its uniqueness.',
       route: ToolRoute.UUID,
       category: ToolCategory.Generators,
+    },
+    {
+      name: 'JWT Decoder',
+      sub: 'Decode JSON Web Tokens to inspect the header and payload. Decoding only — signatures are not verified.',
+      description: `
+        <p>A <b>JSON Web Token</b> is a compact, URL-safe token made of a Base64URL-encoded header, payload and signature joined by dots.</p><br/>
+
+        <p><b>JWT Decoder</b> - Splits the token, decodes the header and payload, and pretty-prints the JSON for inspection.</p><br/>
+
+        <p><b>Security note</b> - This tool only <i>decodes</i>. It never verifies the signature, so a decoded payload is not proof that the token is valid.</p>
+      `,
+      route: ToolRoute.Jwt,
+      category: ToolCategory.Cryptography,
     },
   ]
 }

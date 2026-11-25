@@ -253,6 +253,10 @@
     @apply mb-default flex items-start gap-small rounded-md border border-red-400/30 bg-red-500/10 p-default text-red-200;
   }
 
+  .alert-warning {
+    @apply mb-default flex items-start gap-small rounded-md border border-amber-400/30 bg-amber-500/10 p-default text-amber-200;
+  }
+
   .spinner {
     @apply inline-block h-3.5 w-3.5 shrink-0 animate-spin rounded-full border-2 border-current border-t-transparent;
   }

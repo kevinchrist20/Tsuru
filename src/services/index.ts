@@ -1,3 +1,8 @@
+export { default as Base32Service } from './encoders/base32.service'
 export { default as Base64Service } from './encoders/base64.service'
+export { default as BinaryService } from './encoders/binary.service'
+export { default as HexService } from './encoders/hex.service'
+export { default as HtmlService } from './encoders/html.service'
+export { default as UrlService } from './encoders/url.service'
 export { default as SlugService } from './generators/slug.service'
 export { default as UuidService } from './generators/uuid.service'
