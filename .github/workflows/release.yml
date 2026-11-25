@@ -219,6 +219,21 @@ jobs:
           releaseId: ${{ needs.create-release.outputs.release_id }}
           args: ${{ matrix.args }}
 
+  generate-checksums:
+    needs: [prepare-version, build-tauri]
+    if: ${{ !cancelled() && needs.build-tauri.result == 'success' }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Generate and upload SHA256 checksums
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          TAG="v${{ needs.prepare-version.outputs.version }}"
+          gh release download "$TAG" --repo "$GITHUB_REPOSITORY" --dir artifacts --clobber
+          cd artifacts
+          sha256sum Tsuru* > SHA256SUMS.txt
+          gh release upload "$TAG" SHA256SUMS.txt --repo "$GITHUB_REPOSITORY" --clobber
+
   cleanup-release-artifacts:
     needs: [prepare-version, create-tag, create-release, build-tauri]
     if: ${{ always() && (needs.create-tag.result != 'success' || needs.create-release.result != 'success' || needs.build-tauri.result != 'success') }}

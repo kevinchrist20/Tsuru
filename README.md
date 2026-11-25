@@ -1,5 +1,9 @@
 # Tsuru
 
+[![Release](https://img.shields.io/github/v/release/kevinchrist20/Tsuru)](https://github.com/kevinchrist20/Tsuru/releases)
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
+![Built with Tauri](https://img.shields.io/badge/Built%20with-Tauri-blue)
+
 Tsuru is a desktop app that provides a collection of developer tools designed to assist your workflow. From simple utilities
 like encoders and decoders, generators, JSON formatters, validation tools, cryptography and security, converters and more.
 Tsuru covers various categories in real-world programming — fully offline, no telemetry, no accounts.
@@ -104,7 +108,8 @@ Download the latest build for your platform from the
 
 #### Verify Downloads (Recommended)
 
-Before installing, verify the checksum of the downloaded file against the release checksum file.
+Before installing, verify the checksum of the downloaded file against the
+`SHA256SUMS.txt` file attached to the release.
 
 macOS / Linux:
 
@@ -181,13 +186,13 @@ chmod +x Tsuru*.AppImage
 Debian/Ubuntu:
 
 ```bash
-sudo apt install ./tsuru*.deb
+sudo apt install ./Tsuru*.deb
 ```
 
 Fedora/RHEL/openSUSE:
 
 ```bash
-sudo zypper install ./tsuru*.rpm
+sudo zypper install ./Tsuru*.rpm
 ```
 
 If your desktop asks for confirmation because the binary is from the internet, allow
