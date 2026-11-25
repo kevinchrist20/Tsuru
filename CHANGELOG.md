@@ -5,6 +5,17 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and this
 project adheres to [Semantic Versioning](https://semver.org/).
 
+## [Unreleased]
+
+### Added
+
+- **Auto-update support** with a consent-based flow: the app checks GitHub releases in
+  the background, and when an update is found a dialog in the bottom-left corner offers
+  the download. After the download finishes (with progress), the user confirms to
+  restart and upgrade immediately. Updates are signature-verified with a minisign
+  public key, and macOS/Windows/Linux artifacts are uploaded to releases as
+  `latest.json` + signed bundles via the Release workflow.
+
 ## [0.0.1] - 2026-11-25
 
 ### Added

@@ -378,5 +378,6 @@ pnpm tauri build --debug --no-bundle
    unregistered routes; no badge is needed yet.
 5. Base64 Image encode accepts JPG/PNG only; decode sniffs PNG, JPEG, GIF, and WebP.
    Decide whether encode should support GIF/WebP too.
-6. Native file dialogs, saving decoded images, and URL image fetching require Tauri
-   plugins (`dialog`, `fs`, `http`) — deferred until the plugin/capability work starts.
+6. Native file dialogs, saving decoded images, and URL image fetching still need the
+   `dialog`, `fs` and `http` Tauri plugins; the updater itself landed with the 0.0.2
+   consent-based dialog (see CHANGELOG).

@@ -18,6 +18,8 @@ Built with **Tauri 2**, **Vue 3**, **TypeScript** and **Tailwind CSS 4**.
 - **Typed IPC**: Tauri commands are exposed through auto-generated TypeScript bindings, and structured payloads are exported
   with [ts-rs](https://github.com/Aleph-Alpha/ts-rs).
 - **Tested**: 90+ Rust unit tests for the codecs, plus a Vitest suite for the shared UI logic.
+- **Auto-updates**: updates are signature-verified and offered through a consent dialog —
+  download when you choose, then confirm to restart and upgrade.
 
 ## Available tools
 
@@ -234,12 +236,20 @@ pnpm tauri build --debug --no-bundle
 Releases are cut with the [Release workflow](.github/workflows/release.yml):
 
 1. Run the workflow manually (`workflow_dispatch`) with the version to release
-   (e.g. `0.0.1`).
+   (e.g. `0.0.2`).
 2. It bumps `package.json`, `src-tauri/tauri.conf.json` and `src-tauri/Cargo.toml`,
    opens a version-bump PR against `tauri`, tags `v<version>` and creates the GitHub
    release from `release_notes.md`.
 3. Build jobs then produce macOS (Apple Silicon + Intel), Windows and Linux artifacts
-   and attach them to the release.
+   and attach them to the release, including signed updater bundles and a `latest.json`
+   manifest consumed by the in-app updater.
+
+**Required repository secrets** for signing the updater artifacts (generate a keypair
+with `pnpm tauri signer generate`):
+
+- `TAURI_SIGNING_PRIVATE_KEY` — contents of the private key file.
+- `TAURI_SIGNING_PRIVATE_KEY_PASSWORD` — the key password (may stay empty for a
+  passwordless key).
 
 ## Contributing
 
