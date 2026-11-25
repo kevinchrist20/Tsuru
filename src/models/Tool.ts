@@ -7,6 +7,7 @@ export enum ToolRoute {
 
 export enum ToolCategory {
   EncodeDecode = 'Encoders & Decoders',
+  Generators = 'Generators',
   Converters = 'Converters',
   Cryptography = 'Cryptography & Security',
 }
@@ -45,7 +46,7 @@ export function getTools(): Tool[] {
         <p><a href="https://en.wikipedia.org/wiki/Base64"><b>Base64 Image</b></a> encoding simplifies the process of encoding images into Base64 strings and decoding Base64-encoded images. 
         Base64 encoding represents binary data in ASCII format, allowing images to be embedded directly into HTML, CSS, or XML files.</p><br/>
                 
-        <p><b>Base64 Image Encoder</b> - Converts an image to Base64 by either browsing an image file locally or fetching an image from a URL. 
+        <p><b>Base64 Image Encoder</b> - Converts an image to Base64 by browsing an image file locally.
         When the process is done, the input image and Base64 output will be displayed accordingly.</p>
         <p>Maximum file size supported is 8 MB.</p><br/>
                 
@@ -60,14 +61,14 @@ export function getTools(): Tool[] {
       sub: 'Slugs Generator',
       description: 'It slugify words to an SEO-friendly and human-readable URL slug for SEO optimization. A URL slug is the part located at the very end of a URL that refers to a page or post on a website.',
       route: ToolRoute.Slugs,
-      category: ToolCategory.EncodeDecode,
+      category: ToolCategory.Generators,
     },
     {
       name: 'UUID',
       sub: 'UUID Generator',
       description: 'UUID is an abbreviation standing for Universally Unique Identifier. A UUID is a 128-bit value used to identify a computer resource to ensure its uniqueness.',
       route: ToolRoute.UUID,
-      category: ToolCategory.EncodeDecode,
+      category: ToolCategory.Generators,
     },
   ]
 }

@@ -1,4 +1,4 @@
-import { invoke } from '../types/tauri_commands'
+import { invoke } from '../../types/tauri_commands'
 
 const Base64Service = {
   encode(input: string): Promise<string> {

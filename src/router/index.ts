@@ -1,6 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import DashboardView from '../views/DashboardView.vue'
-import Base64View from '../views/tools/Base64View.vue'
+import ToolView from '../views/tools/ToolView.vue'
 
 const router = createRouter({
   history: createWebHistory(),
@@ -13,8 +13,7 @@ const router = createRouter({
     {
       path: '/tools/:id',
       name: 'Tool',
-      component: Base64View,
-      props: true,
+      component: ToolView,
     },
     {
       // Catch-all route for any unmatched routes
