@@ -40,6 +40,21 @@ export const toolIcons: Record<ToolRoute, string[]> = {
     'M4 13h7v7H4z',
     'M13 13h7v7h-7z',
   ],
+  [ToolRoute.Unicode]: [
+    'M4 7V4h16v3',
+    'M9 20h6',
+    'M12 4v16',
+  ],
+  [ToolRoute.Punycode]: [
+    'm16 3 4 4-4 4',
+    'M20 7H4',
+    'm8 21-4-4 4-4',
+    'M4 17h16',
+  ],
+  [ToolRoute.QuotedPrintable]: [
+    'M8 3H7a2 2 0 0 0-2 2v5a2 2 0 0 1-2 2 2 2 0 0 1 2 2v5a2 2 0 0 0 2 2h1',
+    'M16 21h1a2 2 0 0 0 2-2v-5c0-1.1.9-2 2-2a2 2 0 0 1-2-2V5a2 2 0 0 0-2-2h-1',
+  ],
   [ToolRoute.Slugs]: [
     'm9 15 6-6',
     'M11 5l2-2a4 4 0 0 1 5.66 5.66l-2 2',

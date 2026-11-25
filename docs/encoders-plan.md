@@ -1,8 +1,8 @@
 # Encoders & Decoders Plan
 
-Status: Phase 2 complete
+Status: Phase 3 complete — optional plugin-based extras deferred
 Last updated: 2026-11-25
-Scope: Tsuru desktop app (Tauri 2 + Vue 3)
+Scope: Tauri desktop app (Tauri 2 + Vue 3)
 
 ## 1. Goal
 
@@ -26,26 +26,30 @@ The plan has three outcomes:
 | Hex | `hex` | `encode_hex`, `decode_hex` | `HexView.vue` | Working, uppercase toggle |
 | Binary | `binary` | `encode_binary`, `decode_binary` | `BinaryView.vue` | Working |
 | Base32 | `base32` | `encode_base32`, `decode_base32` | `Base32View.vue` | Working, padding toggle |
+| Unicode escapes | `unicode` | `encode_unicode`, `decode_unicode` | `UnicodeView.vue` | Working, surrogate pairs supported |
+| Punycode / IDN | `punycode` | `encode_punycode`, `decode_punycode` | `PunycodeView.vue` | Working, per-label conversion |
+| Quoted-Printable | `quotedPrintable` | `encode_quoted_printable`, `decode_quoted_printable` | `QuotedPrintableView.vue` | Working, RFC 2045 soft breaks |
 | Slugs | `slug` | `generate_slug` | `SlugView.vue` | Working |
 | UUID | `uuid` | `generate_uuid`, `generate_uuids` | `UuidView.vue` | Working, 1/5/10 generator |
 | JWT | `jwt` | `decode_jwt` | `JwtView.vue` | Working, decode-only with warning |
 
 Current gaps:
 
-- There is no frontend test runner yet (Vitest is deferred until after parity).
-- Base64 Image does not support URL image fetching or native file dialogs yet.
-- Base64 line wrapping is not implemented.
-- The dashboard does not yet group unfinished tools with badges (all listed tools are implemented).
+- Base64 Image does not support URL image fetching, native file dialogs, or saving
+  decoded images to disk (deferred — requires Tauri plugins).
+- The dashboard does not yet group unfinished tools with badges (all listed tools are
+  implemented).
 
-Resolved in Phases 0–2:
+Resolved in Phases 0–3:
 
 - `/tools/:id` resolves through `ToolView` + `toolViews.ts`; unfinished tools show
   `ComingSoonView` instead of the Base64 screen.
 - All codec views share `CodecPanel` + `useCodec`, with options slots for per-tool
-  toggles (URL mode, uppercase, padding).
+  toggles (URL mode, uppercase, padding, wrapping).
 - Slug and UUID belong to `ToolCategory.Generators`; JWT belongs to
   `ToolCategory.Cryptography`.
-- Every codec has Rust unit tests, and `JwtParts` is exported to TypeScript via ts-rs
+- Every codec has Rust unit tests (93), the frontend has Vitest coverage (29 tests),
+  and `JwtParts` is exported to TypeScript via ts-rs
   (`src/types/bindings/JwtParts.ts`).
 
 ## 3. Decisions
@@ -158,15 +162,18 @@ Completed:
 - [x] Base32 encode/decode with padding toggle.
 - [x] JWT decoder with three panels, algorithm chip, and "not verified" warning.
 
-### Phase 3 — Polish
+### Phase 3 — Polish (complete)
 
-- [ ] Base64 line wrapping option (URL-safe + padding toggles land in Phase 1).
-- [ ] Unicode escape/unescape.
-- [ ] Punycode / IDN.
-- [ ] Quoted-Printable.
-- [ ] Drag-and-drop image input.
-- [ ] Save decoded image to disk.
-- [ ] Optional native file dialog and HTTP image fetch.
+- [x] Base64 line wrapping option (RFC 2045 76-character soft breaks).
+- [x] Unicode escape/unescape (surrogate pairs, `\xXX` and short escapes).
+- [x] Punycode / IDN converter (per-label `xn--` conversion, not full IDNA validation).
+- [x] Quoted-Printable encoder/decoder (RFC 2045 with soft breaks and trailing
+      whitespace handling).
+- [x] Drag-and-drop image input (done during the UI pass).
+- [x] Vitest + Vue Test Utils with `pnpm test` (29 frontend tests).
+- [ ] Save decoded image to disk (needs `tauri-plugin-fs` / `tauri-plugin-dialog`).
+- [ ] Optional native file dialog and HTTP image fetch (needs new Tauri plugins and
+      capability changes).
 
 ## 5. Architecture
 
@@ -221,6 +228,9 @@ src/
     hex.service.ts
     binary.service.ts
     base32.service.ts
+    unicode.service.ts
+    punycode.service.ts
+    quoted-printable.service.ts
   services/generators/
     slug.service.ts
     uuid.service.ts
@@ -313,11 +323,11 @@ Tool-specific UX:
 
 ### Frontend
 
-- Add Vitest + Vue Test Utils **after migration parity** (decision recorded above).
-- Test `useCodec` state transitions: mode switch, debounce, error, clear, copy.
-- Test `CodecPanel` renders labels, output, and errors.
-- Test `ToolView` registry resolves every `ToolRoute`.
-- Manual QA checklist per tool before marking ready.
+- [x] Vitest + Vue Test Utils are wired up (`pnpm test`, jsdom environment).
+- [x] `useCodec` state transitions covered: mode switch, debounce, error, clear, copy, refresh.
+- [x] `CodecPanel` renders labels, output, and errors.
+- [x] `ToolView` registry resolves every `ToolRoute`.
+- [ ] Manual QA checklist per tool before marking ready.
 
 ### Validation commands
 
@@ -341,7 +351,9 @@ pnpm tauri build --debug --no-bundle
 9. [x] Binary.
 10. [x] Base32.
 11. [x] JWT decoder under Cryptography & Security.
-12. [ ] Optional: Vitest setup after parity, native dialogs, URL image fetch, extra codecs.
+12. [x] Vitest setup after parity (`pnpm test`, 29 tests).
+13. [ ] Optional: native dialogs, save decoded images, URL image fetch (needs Tauri
+      plugins), extra codecs.
 
 ## 10. Acceptance criteria
 
@@ -357,12 +369,14 @@ pnpm tauri build --debug --no-bundle
 
 ## 11. Remaining decisions
 
-1. Base64 defaults are standard alphabet with padding enabled; confirm these stay the
-   defaults when presets are added later.
+1. Base64 defaults are standard alphabet, padding on, wrapping off; the wrap toggle
+   outputs RFC 2045 soft breaks at 76 characters.
 2. Slug transliteration uses `deunicode`; confirm whether Japanese/Chinese output should
    keep romanization or fall back to pinyin/romaji settings.
 3. UUID UI ships with counts 1/5/10 and newline-separated copy-all.
-4. Should dashboard cards for unfinished tools show a "Coming soon" badge? Currently
-   they navigate to `ComingSoonView`.
+4. All current tools are implemented, so `ComingSoonView` only appears for future
+   unregistered routes; no badge is needed yet.
 5. Base64 Image encode accepts JPG/PNG only; decode sniffs PNG, JPEG, GIF, and WebP.
    Decide whether encode should support GIF/WebP too.
+6. Native file dialogs, saving decoded images, and URL image fetching require Tauri
+   plugins (`dialog`, `fs`, `http`) — deferred until the plugin/capability work starts.

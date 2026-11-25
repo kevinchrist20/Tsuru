@@ -3,11 +3,13 @@ import { invoke } from '../../types/tauri_commands'
 export interface Base64Options {
   urlSafe: boolean
   padding: boolean
+  wrap?: boolean
 }
 
 const DEFAULT_OPTIONS: Base64Options = {
   urlSafe: false,
   padding: true,
+  wrap: false,
 }
 
 const Base64Service = {
@@ -16,6 +18,7 @@ const Base64Service = {
       input,
       urlSafe: options.urlSafe,
       padding: options.padding,
+      wrap: options.wrap ?? false,
     })
   },
 

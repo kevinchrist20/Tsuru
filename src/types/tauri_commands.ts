@@ -6,7 +6,7 @@ import type { JwtParts } from './bindings';
 export type TauriCommands = {
     encode_base64: {
         returns: string,
-        args: { input: string, urlSafe: boolean, padding: boolean }
+        args: { input: string, urlSafe: boolean, padding: boolean, wrap: boolean }
     },
     decode_base64: {
         returns: string,
@@ -49,6 +49,30 @@ export type TauriCommands = {
         args: { input: string, padding: boolean }
     },
     decode_base32: {
+        returns: string,
+        args: { input: string }
+    },
+    encode_unicode: {
+        returns: string,
+        args: { input: string }
+    },
+    decode_unicode: {
+        returns: string,
+        args: { input: string }
+    },
+    encode_punycode: {
+        returns: string,
+        args: { input: string }
+    },
+    decode_punycode: {
+        returns: string,
+        args: { input: string }
+    },
+    encode_quoted_printable: {
+        returns: string,
+        args: { input: string }
+    },
+    decode_quoted_printable: {
         returns: string,
         args: { input: string }
     },

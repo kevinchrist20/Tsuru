@@ -6,6 +6,9 @@ export enum ToolRoute {
   Hex = 'hex',
   Binary = 'binary',
   Base32 = 'base32',
+  Unicode = 'unicode',
+  Punycode = 'punycode',
+  QuotedPrintable = 'quotedPrintable',
   Slugs = 'slug',
   UUID = 'uuid',
   Jwt = 'jwt',
@@ -127,6 +130,45 @@ export function getTools(): Tool[] {
         <p><b>Base32 Decoder</b> - Accepts uppercase or lowercase input, with or without padding and whitespace.</p>
       `,
       route: ToolRoute.Base32,
+      category: ToolCategory.EncodeDecode,
+    },
+    {
+      name: 'Unicode Escape/Unescape',
+      sub: String.raw`Encode text as \uXXXX escapes and decode them back, including surrogate pairs.`,
+      description: String.raw`
+        <p><b>Unicode escapes</b> represent characters with <code>\uXXXX</code> code point escapes, useful for embedding text in JSON, source code or configs.</p><br/>
+
+        <p><b>Unicode Encoder</b> - Keeps printable ASCII as-is (except backslashes) and escapes every other character, using surrogate pairs for characters beyond the BMP. Newlines become <code>\u000a</code>.</p><br/>
+
+        <p><b>Unicode Decoder</b> - Understands <code>\uXXXX</code>, <code>\xXX</code> and short escapes like <code>\n</code>, <code>\t</code> and <code>\\</code>, and rejects lone surrogates.</p>
+      `,
+      route: ToolRoute.Unicode,
+      category: ToolCategory.EncodeDecode,
+    },
+    {
+      name: 'Punycode / IDN Converter',
+      sub: 'Convert Unicode domains to punycode (xn--…) and back, label by label.',
+      description: `
+        <p><a href="https://en.wikipedia.org/wiki/Punycode"><b>Punycode</b></a> is the encoding behind internationalized domain names: non-ASCII labels become <code>xn--</code> labels that legacy DNS can carry.</p><br/>
+
+        <p><b>Punycode Encoder</b> - Lowercases the input and converts each non-ASCII label to its <code>xn--</code> form. ASCII labels pass through unchanged.</p><br/>
+
+        <p><b>Punycode Decoder</b> - Converts <code>xn--</code> labels back to Unicode. Note this is per-label punycode conversion, not full IDNA validation.</p>
+      `,
+      route: ToolRoute.Punycode,
+      category: ToolCategory.EncodeDecode,
+    },
+    {
+      name: 'Quoted-Printable Encoder/Decoder',
+      sub: 'RFC 2045 quoted-printable with 76-character soft breaks.',
+      description: `
+        <p><b>Quoted-printable</b> is a MIME content-transfer-encoding that keeps mostly-ASCII text readable while escaping bytes that would break mail transport.</p><br/>
+
+        <p><b>Quoted-Printable Encoder</b> - Keeps printable ASCII literal, escapes <code>=</code> as <code>=3D</code>, encodes every other byte as <code>=XX</code>, encodes trailing whitespace, and wraps lines at 76 characters with <code>=</code> soft breaks.</p><br/>
+
+        <p><b>Quoted-Printable Decoder</b> - Removes soft breaks, drops trailing whitespace per the RFC, and expands <code>=XX</code> sequences.</p>
+      `,
+      route: ToolRoute.QuotedPrintable,
       category: ToolCategory.EncodeDecode,
     },
     {

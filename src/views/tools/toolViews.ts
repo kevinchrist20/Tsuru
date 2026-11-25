@@ -7,7 +7,10 @@ import BinaryView from './BinaryView.vue'
 import HexView from './HexView.vue'
 import HtmlView from './HtmlView.vue'
 import JwtView from './JwtView.vue'
+import PunycodeView from './PunycodeView.vue'
+import QuotedPrintableView from './QuotedPrintableView.vue'
 import SlugView from './SlugView.vue'
+import UnicodeView from './UnicodeView.vue'
 import UrlView from './UrlView.vue'
 import UuidView from './UuidView.vue'
 
@@ -25,6 +28,9 @@ export const toolViews: Partial<Record<ToolRoute, Component>> = {
   [ToolRoute.Hex]: HexView,
   [ToolRoute.Binary]: BinaryView,
   [ToolRoute.Base32]: Base32View,
+  [ToolRoute.Unicode]: UnicodeView,
+  [ToolRoute.Punycode]: PunycodeView,
+  [ToolRoute.QuotedPrintable]: QuotedPrintableView,
   [ToolRoute.Slugs]: SlugView,
   [ToolRoute.UUID]: UuidView,
   [ToolRoute.Jwt]: JwtView,
